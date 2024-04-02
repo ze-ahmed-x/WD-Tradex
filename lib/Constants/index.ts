@@ -26,7 +26,8 @@ export const contactInfo = {
 
 export const introText = {
     title: "Why We Do What We Do",
-    description: "At our core, we believe in the transformative power of human potential. We are not merely a company; we are ambassadors of opportunity, dedicated to bridging the gap between talent and opportunity. We facilitate the export of skilled human resources from Pakistan to thriving companies in the Middle East and Europe. We unlock exciting career prospects for Pakistanis and empower businesses abroad to access a dynamic and diverse talent pool. Our mission is to foster a win-win situation, fueling global growth and enriching careers across borders."
+    description: "At our core, we believe in the transformative power of human potential. We are not merely a company; we are ambassadors of opportunity, dedicated to bridging the gap between talent and opportunity. We facilitate the export of skilled human resources from Pakistan to thriving companies in the Middle East and Europe. We unlock exciting career prospects for Pakistanis and empower businesses abroad to access a dynamic and diverse talent pool. Our mission is to foster a win-win situation, fueling global growth and enriching careers across borders.",
+    button: {lebal: "Learn More", route: "/services" }
 }
 
 export const processInfo = {

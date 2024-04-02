@@ -11,7 +11,12 @@ const Clients = () => {
         </div>
         <div className='flex gap-8 sm:gap-9 md:gap-10 lg:gap-12 flex-wrap justify-center'>
             {clientFlags.map(flag => (
-                <Image src={flag.flagSrc} alt={flag.countryName} key={flag.countryName} height={47} width={79} className='rounded-md shadow-md w-9 sm:w-12 md:w-14 lg:w-20 border'/>
+                <Image src={flag.flagSrc}
+                alt={flag.countryName}
+                key={flag.countryName}
+                height={47}
+                width={79}
+                className='rounded sm:rounded-md shadow-md w-9 sm:w-12 md:w-14 lg:w-20 border'/>
             ))}
         </div>
     </div>
