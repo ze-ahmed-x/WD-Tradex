@@ -1,11 +1,21 @@
-export const navItems = [ 
-    { label: 'Home', href: "/"},
-    { label: 'About', href: "/about"},
-    { label: 'Services', href: "/services"},
+import {
+    crotiaFlag,
+    germanyFlag,
+    ksaFlag,
+    iraqFlag,
+    uaeFlag,
+    portugalFlag,
+    qatarFlag,
+} from "@/public"
+
+export const navItems = [
+    { label: 'Home', href: "/" },
+    { label: 'About', href: "/about" },
+    { label: 'Services', href: "/services" },
     // { label: 'Job Seekers', href: "/jobSeekers"},
-    { label: 'Blog', href: "/blog"},
-    { label: 'FAQs', href: "/faqs"},
-    { label: 'Contact Us', href: "/contact"},
+    { label: 'Blog', href: "/blog" },
+    { label: 'FAQs', href: "/faqs" },
+    { label: 'Contact Us', href: "/contact" },
 ]
 
 export const contactInfo = {
@@ -42,7 +52,7 @@ export const offerInfo = {
             // image
             title: "Employer",
             description: "Looking to uplift your organization with new talent? You are the right place! Just let us know, we got you covered",
-            buttonInfo: { route: "#contact", lebal: "Contact Us"}
+            buttonInfo: { route: "#contact", lebal: "Contact Us" }
         },
         {
             // image
@@ -58,3 +68,13 @@ export const homeContactInfo = {
     sub_text: "Visit us, call us, e-mail us or just simply drop a message",
     description: "We're here to help! Feel free to reach out if you have any questions"
 }
+
+export const clientFlags = [
+    { countryName:"Crotia", flagSrc: crotiaFlag },
+    { countryName:"Germany", flagSrc: germanyFlag},
+    { countryName:"Saudia Arabia", flagSrc: ksaFlag },
+    { countryName:"Iraq", flagSrc: iraqFlag},
+    { countryName:"UAE", flagSrc: uaeFlag},
+    { countryName:"Portugal", flagSrc: portugalFlag},
+    { countryName:"qatar", flagSrc: qatarFlag},
+]
