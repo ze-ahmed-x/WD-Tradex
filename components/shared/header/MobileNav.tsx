@@ -30,7 +30,7 @@ const MobileNav = () => {
                     {navItems.map(item => {
                         const isActive = pathName === item.href
                         return (
-                            <Link href={item.href} key={item.label} className={`${isActive && 'text-primary font-semibold'} regular`}>
+                            <Link href={item.href} key={item.label} className={`${isActive && 'text-primary font-semibold'} regularText`}>
                                 {item.label}
                             </Link>
                         )

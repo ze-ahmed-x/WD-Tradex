@@ -19,7 +19,7 @@ const Navbar = () => {
                 {navItems.map( item => {
                     const isActive = pathName === item.href;
                     return (
-                        <Link href={item.href} key={item.label} className= {`${isActive && 'font-semibold text-primary' } regular`} >{ item.label }</Link>
+                        <Link href={item.href} key={item.label} className= {`${isActive && 'font-semibold text-primary' } regularText`} >{ item.label }</Link>
                     )})}
                 </div>
                 <div className='sm:hidden'>

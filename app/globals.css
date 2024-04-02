@@ -5,9 +5,9 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
     --hero-bg: 210 31% 97%;
     --footer-bg: 0 0% 30%; 
+    --background: 0 0% 100%;
     --foreground: 0 0% 30%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
@@ -29,10 +29,10 @@
     --radius: 1rem;
   }
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
     --hero-bg: 210 31% 97%;
     --footer-bg: 0 0% 30%; 
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;
@@ -81,12 +81,12 @@
     @apply text-2xl md:text-3xl lg:text-4xl font-semibold
   }
   .h3 {
-    @apply text-base md:text-xl lg:text-2xl
+    @apply text-base md:text-xl lg:text-2xl font-semibold
   }
-  .regular {
+  .regularText {
     @apply text-xs md:text-sm lg:text-base
   }
   .subText {
-    @apply regular text-foreground/75
+    @apply regularText text-foreground/75
   }
 }

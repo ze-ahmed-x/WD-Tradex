@@ -19,6 +19,8 @@ const config = {
     },
     extend: {
       colors: {
+        hero_BG: "hsl(var(--hero-bg))",
+        footer_BG: "hsl(var(--footer-bg))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
