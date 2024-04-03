@@ -8,8 +8,13 @@ import Link from 'next/link'
 const Intro = () => {
   return (
     <div className='custom_container flex flex-col-reverse sm:flex-row gap-8 items-center'>
-        <Image src={weDo.src} alt='we do' width={480} height={270} className='rounded-md shadow-md'/>
-        <div className='flex flex-col sm:gap-2'>
+        <div>
+        <Image src={weDo.src} alt='we do'
+        width={480}
+        height={270}
+        className='rounded-md shadow-md'/>
+        </div>
+        <div className='flex flex-col sm:gap-2 sm:w-1/2'>
             <h2 className='h2'>
                 {introText.title}
             </h2>

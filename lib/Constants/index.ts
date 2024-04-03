@@ -6,6 +6,8 @@ import {
     uaeFlag,
     portugalFlag,
     qatarFlag,
+    employer,
+    seeker,
 } from "@/public"
 
 export const navItems = [
@@ -50,13 +52,13 @@ export const offerInfo = {
     sub_text: "Register with us or let you know you requirements",
     cards: [
         {
-            // image
-            title: "Employer",
+            image: { imageSrc: employer, alt:'Employer'},
+            title: "Employers",
             description: "Looking to uplift your organization with new talent? You are the right place! Just let us know, we got you covered",
             buttonInfo: { route: "#contact", lebal: "Contact Us" }
         },
         {
-            // image
+            image: { imageSrc: seeker, alt:'Seeker'},
             title: "Job Seekers",
             description: "Ger yourself registered with us and we’ll contact you as soon we’ll have a vacancy related to you field",
             buttonInfo: { route: "/register", lebal: "Register" }

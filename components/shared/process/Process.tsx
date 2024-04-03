@@ -9,7 +9,7 @@ const Process = () => {
                 <h2 className='h2'> {processInfo.title} </h2>
                 <p className='subText'> {processInfo.sub_text} </p>
             </div>
-            <div className='flex justify-center gap-20 flex-wrap'>
+            <div className='flex justify-center gap-4 lg:gap-20 flex-wrap'>
                 {processInfo.steps.map(step => (
                     <ProcessCircle key={step.seqNo} number={step.seqNo} label={step.description} />
                 ))}

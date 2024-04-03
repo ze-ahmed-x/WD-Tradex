@@ -1,6 +1,7 @@
 import Clients from "@/components/shared/clients/Clients";
 import Hero from "@/components/shared/hero/Hero";
 import Intro from "@/components/shared/intro/Intro";
+import Offer from "@/components/shared/offer/Offer";
 import Process from "@/components/shared/process/Process";
 
 export default function Home() {
@@ -18,6 +19,9 @@ export default function Home() {
         </section>
         <section>
           <Process />
+        </section>
+        <section>
+          <Offer />
         </section>
       </div>
     </main>
