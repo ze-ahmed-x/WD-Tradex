@@ -89,4 +89,5 @@
   .subText {
     @apply regularText text-foreground/75
   }
+  
 }
