@@ -8,7 +8,7 @@ const Offer = () => {
             <h2 className='h2 text-center'> {offerInfo.title} </h2>
             <p className='subText'>{offerInfo.sub_text}</p>
         </div>
-        <div className="flex flex-col sm:flex-row justify-between gap-4">
+        <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-8">
             { offerInfo.cards.map( offer => (
                 <OfferCard key={offer.title} imageSrc= {offer.image.imageSrc} imageAlt= { offer.image.alt}
                 buttonLabel= { offer.buttonInfo.lebal} route= { offer.buttonInfo.route} title= {offer.title}

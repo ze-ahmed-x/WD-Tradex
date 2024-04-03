@@ -1,4 +1,5 @@
 import Clients from "@/components/shared/clients/Clients";
+import Contact from "@/components/shared/contact/Contact";
 import Hero from "@/components/shared/hero/Hero";
 import Intro from "@/components/shared/intro/Intro";
 import Offer from "@/components/shared/offer/Offer";
@@ -22,6 +23,9 @@ export default function Home() {
         </section>
         <section>
           <Offer />
+        </section>
+        <section id="contact">
+          <Contact />
         </section>
       </div>
     </main>

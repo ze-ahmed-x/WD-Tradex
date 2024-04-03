@@ -72,6 +72,12 @@ export const homeContactInfo = {
     description: "We're here to help! Feel free to reach out if you have any questions"
 }
 
+export const pageContactInfo = {
+    title: "Contact Us",
+    sub_text: "Lets get in touch",
+    description: "We're here to help! Feel free to reach out if you have any questions"
+}
+
 export const clientFlags = [
     { countryName:"Crotia", flagSrc: crotiaFlag },
     { countryName:"Germany", flagSrc: germanyFlag},
