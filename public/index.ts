@@ -15,8 +15,11 @@ import mining from './images/mm.webp';
 import overseaEmployment from './images/oe.png';
 import training from './images/trg.webp';
 import weDo from './images/wedo.jpg';
-import employer from './employer.svg'
-import seeker from './seekers.svg'
+import employer from './employer.svg';
+import seeker from './seekers.svg';
+import x from './X.svg';
+import fb from './fb.svg';
+import linkedIn from './LinkedIn.svg';
 
 export {
 logo,
@@ -37,5 +40,8 @@ overseaEmployment,
 training,
 weDo,
 employer,
-seeker
+seeker,
+x,
+fb,
+linkedIn
 }

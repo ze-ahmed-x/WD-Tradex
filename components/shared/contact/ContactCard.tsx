@@ -14,7 +14,7 @@ import ContactForm from "./ContactForm"
 
 const ContactCard = () => {
     return (
-<Card className='bg-hero_BG shadow-md p-10'>
+<Card className='bg-hero_BG shadow-md p-5 sm:p-10 w-full'>
             <CardContent>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 sm:justify-between">
                     <div className="flex flex-col gap-4 sm:gap-8 sm:w-1/2">
@@ -24,26 +24,26 @@ const ContactCard = () => {
                                 <div>
                                     <DrawingPinIcon className="text-primary size-4 sm:size-6" />
                                 </div>
-                                <p className="regularText sm:max-w-[25ch]"> {contactInfo.address} </p>
+                                <p className="regularText sm:max-w-[27ch]"> {contactInfo.address} </p>
                             </div>
                             <div className="flex gap-2 sm:gap-4 items-center">
                                 <div>
                                     <MobileIcon className="text-primary size-4 sm:size-6" />
                                 </div>
-                                <p className="regularText sm:max-w-[25ch]"> {contactInfo.phone} </p>
+                                <p className="regularText "> {contactInfo.phone} </p>
                             </div>
                             <div className="flex gap-2 sm:gap-4 items-center">
                                 <div>
                                     <EnvelopeClosedIcon className="text-primary size-4 sm:size-6" />
                                 </div>
-                                <p className="regularText sm:max-w-[25ch]"> {contactInfo.email} </p>
+                                <p className="regularText"> {contactInfo.email} </p>
                             </div>
                             <div className="hidden sm:block">
                                 <Image src={mailBox.src} alt="mailbox" height={250} width={250} />
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-4 sm:gap-8 sm:w-1/2">
+                    <div className="flex flex-col gap-4 sm:gap-8 sm:w-1/3">
                         <h3 className="h3">Send Message</h3>
                         <ContactForm />
 
