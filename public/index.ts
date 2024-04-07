@@ -22,6 +22,7 @@ import fb from './fb.svg';
 import linkedIn from './LinkedIn.svg';
 import about from './images/About.jpg';
 import alternateEnery from './images/ae.webp'
+import blog1Image from './images/blog1.jpg'
 
 export {
 logo,
@@ -47,5 +48,6 @@ x,
 fb,
 linkedIn,
 about,
-alternateEnery
+alternateEnery,
+blog1Image,
 }

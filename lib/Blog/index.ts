@@ -10,6 +10,6 @@ export const findBlogById = (id: string) => {
 }
 
 export const blogArray = [ 
-    {_id: blog1._id, title: blog1.title, blog: blog1},
-    {_id: blog2._id, title: blog2.title, blog: blog2},
+    {_id: blog1._id, title: blog1.title, thumbnail: blog1.thumbnail, thumbnailAlt: blog1.thumnailAlt, blog: blog1},
+    {_id: blog2._id, title: blog2.title, thumbnail: blog2.thumbnail, thumbnailAlt: blog1.thumnailAlt, blog: blog2},
 ]

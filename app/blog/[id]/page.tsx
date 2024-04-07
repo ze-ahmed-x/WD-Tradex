@@ -42,8 +42,6 @@ const writelist = (list: segmentItem[]) => {
 
 const page = ({ params: { id } }: { params: { id: string } }) => {
     const blog = findBlogById(id)
-    console.log({ id: id, blo: blog })
-
     return (
         <section className='custom_container'>
             <div className='flex flex-col gap-6 sm:gap-8 md:gap-10 lg:gap-12 mt-10'>

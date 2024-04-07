@@ -1,6 +1,10 @@
+import { blog1Image } from "@/public";
+
 const blog = {
     _id:'02',
     title: "Blog - 2",
+    thumbnail: blog1Image.src,
+    thumnailAlt: "handshake",
     segments: [
         {text: "Pakistan boasts a rich talent pool and a young, energetic workforce. As the global job market evolves, seeking overseas employment has become an increasingly attractive option for many Pakistanis. This article explores the expanding scope of overseas employment opportunities and the factors driving this trend."},
         {
