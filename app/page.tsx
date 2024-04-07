@@ -8,7 +8,7 @@ import Process from "@/components/shared/process/Process";
 export default function Home() {
   return (
     <main>
-      <div className="flex flex-col gap-6 sm:gap-8 md:gap-10 lg:gap-12 min-h-screen">
+      <div className="flex flex-col gap-10 sm:gap-14 md:gap-16 lg:gap-20 min-h-screen">
         <section>
           <Hero />
         </section>

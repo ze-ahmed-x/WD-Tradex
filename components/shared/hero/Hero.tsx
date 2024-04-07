@@ -7,7 +7,7 @@ import Link from 'next/link'
 const Hero = () => {
     return (
         <div className='bg-hero_BG'>
-            <div className='custom_container flex flex-col sm:flex-row items-center gap-6 py-5'>
+            <div className='custom_container flex flex-col sm:flex-row items-center sm:justify-between gap-6 py-5'>
                 <div className='flex flex-col gap-4'>
                     <div className='flex flex-col gap-2'>
                         <h3 className='h3'>Leading Manpower Recruitment Agency of Pakistan</h3>
@@ -19,7 +19,7 @@ const Hero = () => {
                     <div className='flex flex-col sm:flex-row gap-2'>
                         <div className='flex gap-2 items-center'>
                             <DrawingPinIcon className='text-primary min-w-8 sm:size-6' />
-                            <p className='regularText sm:max-w-[25ch]'>{contactInfo.address}</p>
+                            <p className='regularText sm:max-w-[17ch]'>{contactInfo.address}</p>
                         </div>
                         <div className='flex gap-2 items-center'>
                             <MobileIcon className='text-primary min-w-8 sm:size-6' />
@@ -34,14 +34,11 @@ const Hero = () => {
                         <Link href='#contact'>Drop a Message</Link>
                     </Button>
                 </div>
+                <div>
                 <Image src={hero.src} alt='hero'
-                    sizes="100vw"
-                    style={{
-                        width: '100%',
-                        height: 'auto',
-                    }}
                     height={306} width={450}
-                    className='rounded-lg shadow-md sm:max-w-fit' />
+                    />
+                    </div>
             </div>
         </div>
     )

@@ -8,7 +8,7 @@ import portugalFlag from './images/Portugal.png';
 import qatarFlag from './images/qatar.png';
 import ukFlag from './images/UK.png';
 import globalTrade from './images/gt.webp';
-import hero from './images/hero.jpg';
+import hero from './images/hero.png';
 import localTrade from './images/lt.webp';
 import mailBox from './images/MailBox.png';
 import mining from './images/mm.webp';
@@ -20,6 +20,8 @@ import seeker from './seekers.svg';
 import x from './X.svg';
 import fb from './fb.svg';
 import linkedIn from './LinkedIn.svg';
+import about from './images/About.jpg';
+import alternateEnery from './images/ae.webp'
 
 export {
 logo,
@@ -43,5 +45,7 @@ employer,
 seeker,
 x,
 fb,
-linkedIn
+linkedIn,
+about,
+alternateEnery
 }

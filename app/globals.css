@@ -83,6 +83,9 @@
   .h3 {
     @apply text-base md:text-xl lg:text-2xl font-semibold
   }
+  .h4 {
+    @apply text-sm md:text-base lg:text-xl font-semibold
+  }
   .regularText {
     @apply text-xs md:text-sm lg:text-base
   }
