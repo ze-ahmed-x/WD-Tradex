@@ -23,6 +23,7 @@ import linkedIn from './LinkedIn.svg';
 import about from './images/About.jpg';
 import alternateEnery from './images/ae.webp'
 import blog1Image from './images/blog1.jpg'
+import underConstructionImage from './images/UC.webp'
 
 export {
 logo,
@@ -50,4 +51,5 @@ linkedIn,
 about,
 alternateEnery,
 blog1Image,
+underConstructionImage
 }
