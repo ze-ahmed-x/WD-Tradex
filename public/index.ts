@@ -24,6 +24,7 @@ import about from './images/About.jpg';
 import alternateEnery from './images/ae.webp'
 import blog1Image from './images/blog1.jpg'
 import underConstructionImage from './images/UC.webp'
+import blog2Image from "./images/blog2.jpg"
 
 export {
 logo,
@@ -51,5 +52,6 @@ linkedIn,
 about,
 alternateEnery,
 blog1Image,
-underConstructionImage
+underConstructionImage,
+blog2Image
 }
