@@ -1,14 +1,15 @@
 'use server'
-import { Schema, model, models } from "mongoose";
+import { Document, Schema, model, models } from "mongoose";
 
-interface User {
+export interface IUser extends Document {
+    _id: string;
     photoUrl?: string;
     firstName: string;
     lastName: string;
     cnic: string;
     mobile: string;
     email: string;
-    gender: string;
+    gender: string; 
     dob: Date;
     maritalStatus: string;
     religion: string;
@@ -21,8 +22,8 @@ interface User {
     pCity: string;
     profession: string;
     yearsOfExperience: number;
-    professionCat: string;
-    professionSubCat: string;
+    professionCat: {_id: string, description: string};
+    professionSubCat: {_id: string, description: string};
     password: string;
     role: string;
     appliedJobs?: string[]; // Array of ObjectId references as strings
@@ -48,8 +49,8 @@ const UserSchema = new Schema({
     pCity: { type: String, required: true },
     profession: { type: String, required: true },
     yearsOfExperience: { type: Number },
-    professionCat: { type: String, required: true },
-    professionSubCat: { type: String, required: true },
+    professionCat: { type: Schema.Types.ObjectId, ref: "Category", required: true },
+    professionSubCat: { type: Schema.Types.ObjectId, required: true },
     password: { type: String, required: true },
     role: { type: String, required: true, default: "male"},
     appliedJobs: [{ type: Schema.Types.ObjectId, ref: "Jobs" }]
