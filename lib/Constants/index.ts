@@ -18,14 +18,14 @@ import {
 } from "@/public"
 
 export enum Gender {
-    male,
-    female
+    male = 'Male',
+    female = 'Female'
 }
 export enum MaritalStatus {
-    married,
-    single,
-    widowed,
-    divorced
+    married = "Married",
+    single = "Single",
+    widowed = "Widowed",
+    divorced = "Divorced"
 }
 export enum UserRole {
     admin,

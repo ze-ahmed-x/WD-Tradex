@@ -1,4 +1,3 @@
-'use server'
 import { Document, Schema, model, models } from "mongoose";
 
 export interface IUser extends Document {
@@ -13,6 +12,7 @@ export interface IUser extends Document {
     dob: Date;
     maritalStatus: string;
     religion: string;
+    domicileProvince: string;
     domicileCity: string;
     cAddress: string;
     cProvince: string;
@@ -22,10 +22,10 @@ export interface IUser extends Document {
     pCity: string;
     profession: string;
     yearsOfExperience: number;
-    professionCat: {_id: string, description: string};
-    professionSubCat: {_id: string, description: string};
+    professionCat: string;
+    professionSubCat: string;
     password: string;
-    role: string;
+    role?: string;
     appliedJobs?: string[]; // Array of ObjectId references as strings
 }
 
@@ -40,6 +40,7 @@ const UserSchema = new Schema({
     dob: { type: Date, required: true },
     maritalStatus: { type: String, required: true },
     religion: { type: String, required: true },
+    domicileProvince: { type: String, required: true },
     domicileCity: { type: String, required: true },
     cAddress: { type: String, required: true },
     cProvince: { type: String, required: true },
@@ -51,8 +52,9 @@ const UserSchema = new Schema({
     yearsOfExperience: { type: Number },
     professionCat: { type: Schema.Types.ObjectId, ref: "Category", required: true },
     professionSubCat: { type: Schema.Types.ObjectId, required: true },
+    role: { type: String, required: true, default: "seeker"},
+    termsAccepted: { type: Boolean, required: true},
     password: { type: String, required: true },
-    role: { type: String, required: true, default: "male"},
     appliedJobs: [{ type: Schema.Types.ObjectId, ref: "Jobs" }]
 },
     {

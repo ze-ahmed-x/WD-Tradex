@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -31,17 +31,38 @@ import { Gender, listOfReligions, MaritalStatus } from '@/lib/Constants'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { State, City, ICity } from 'country-state-city';
+import { getAllProfCats } from '@/lib/database/actions/category.actions'
+import { IprofCat, IprofSubCat } from '@/lib/database/models/category.model'
+import { Checkbox } from "@/components/ui/checkbox"
+import Link from 'next/link'
+import { Separator } from "@/components/ui/separator"
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
+import { createUser } from '@/lib/database/actions/user.action'
+import { IUser } from '@/lib/database/models/user.model'
 
 
 
 const SignupForm = () => {
+    const { toast } = useToast()
     // 1. Define your form.
     const form = useForm<z.infer<typeof SignupSchema>>({
         resolver: zodResolver(SignupSchema),
         defaultValues: defaultSignupValues,
     })
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof SignupSchema>) {
+    async function onSubmit(values: z.infer<typeof SignupSchema>) {
+        const {confirmCnic, confirmPassword, yearsOfExperience, ... user} = values;
+        try {
+            const newUser = await createUser({role: "seeker", yearsOfExperience: yearsOfExperience!, ...user});
+            console.log(newUser)
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: error.message,
+              })
+        }
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         console.log(values)
@@ -51,33 +72,44 @@ const SignupForm = () => {
     // console.log(listOfReligions)
     // console.log(State.getStatesOfCountry('PK'))
     // *Feth Categories
-    // const professionCategories = useRef<Icategory[]>([])
     const pCategoryFormValue = form.watch().professionCat;
+    const [profCategories, setProfCategories] = useState<IprofCat[]>([])
+    const [profSubCategories, setProfSubCategories] = useState<IprofSubCat[]>([])
     const [pSubCatFormDisabled, setpSubCatFormDisabled] = useState(true);
-    // const [pSubCategories, setpSubCategories] = useState<IsubCategory[]>([])
-    //initial category fetch 
+    //initial category fetch
     useEffect(() => {
-        console.log("I only ran once!");
-      }, []);
-    useEffect (()=>{
-        // const getProfessionCategories = async () => {
-        //     // await createCategory();
-        //     const categoriesList = await getAllCategories() as Icategory[];
-        //     if (categoriesList) {
-        //          professionCategories.current = categoriesList as Icategory[];
-        //     }
-        // }
-        // getProfessionCategories();
-        
+        const getProfCats = async () => {
+            const catList = await getAllProfCats();
+            // console.log(catList)
+            if (catList) {
+                setProfCategories(catList as IprofCat[]);
+                // console.log(profCategories)
+            }
+        }
+        getProfCats();
     }, [])
     // sub category fetch
-    // useEffect (()=> {
-    //     if (pCategoryFormValue) {
-    //         setpSubCatFormDisabled(false)
-    //         // const currentCategory = professionCategories.current.find((val) => val._id.toString().match(pCategoryFormValue));
-    //         setpSubCategories(currentCategory?.subCategories || []);
-    //     }
-    // }, [pCategoryFormValue])
+    useEffect(() => {
+        if (pCategoryFormValue) {
+            setpSubCatFormDisabled(false)
+            const currentCategory = profCategories.find((val) => val._id.toString().match(pCategoryFormValue));
+            setProfSubCategories(currentCategory?.subCats || []);
+        }
+    }, [pCategoryFormValue])
+
+    // *Domicile City
+    const domProvince = form.watch().domicileProvince
+    const [domCityDisable, setDomCityDisable] = useState(true)
+    const [domCityList, setDomCityList] = useState<ICity[]>([])
+    useEffect(() => {
+        if (!!domProvince) {
+            setDomCityDisable(false)
+            setDomCityList(City.getCitiesOfState('PK', domProvince))
+            // console.log("Enabling cities: Province Value: " + cProvince)
+        }
+
+    }, [domProvince])
+
     // *Current Address
     const cProvince = form.watch().cProvince
     const [cCityDisable, setcCityDisable] = useState(true)
@@ -86,7 +118,7 @@ const SignupForm = () => {
         if (!!cProvince) {
             setcCityDisable(false)
             setCityList(City.getCitiesOfState('PK', cProvince))
-            console.log("Enabling cities: Province Value: " + cProvince)
+            // console.log("Enabling cities: Province Value: " + cProvince)
         }
 
     }, [cProvince])
@@ -98,7 +130,7 @@ const SignupForm = () => {
         if (!!pProvince) {
             setpCityDisable(false)
             setpCityList(City.getCitiesOfState('PK', pProvince))
-            console.log("Enabling cities: Province Value: " + pProvince)
+            // console.log("Enabling cities: Province Value: " + pProvince)
         }
 
     }, [pProvince])
@@ -205,9 +237,12 @@ const SignupForm = () => {
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectLabel>Gender</SelectLabel>
-                                                {Object.entries(Gender).filter(([key]) => isNaN(Number(key))).map((val, index) => (
-                                                    <SelectItem key={index} value={val[0]}>{val[0][0].toUpperCase() + val[0].slice(1)}</SelectItem>
+                                                {Object.entries(Gender).map((val, index) => (
+                                                    <SelectItem key={index} value={val[1]}>{val[1]}</SelectItem>
                                                 ))}
+                                                {/* {Object.entries(Gender).filter(([key]) => isNaN(Number(key))).map((val, index) => (
+                                                    <SelectItem key={index} value={val[0]}>{val[0][0].toUpperCase() + val[0].slice(1)}</SelectItem>
+                                                ))} */}
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
@@ -257,9 +292,12 @@ const SignupForm = () => {
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectLabel>Marital Status</SelectLabel>
-                                                {Object.entries(MaritalStatus).filter(([key]) => isNaN(Number(key))).map((val, index) => (
-                                                    <SelectItem key={index} value={val[0]}>{val[0][0].toUpperCase() + val[0].slice(1)}</SelectItem>
+                                                {Object.values(MaritalStatus).map((val, index) => (
+                                                    <SelectItem key={index} value={val}>{val}</SelectItem>
                                                 ))}
+                                                {/* {Object.entries(MaritalStatus).filter(([key]) => isNaN(Number(key))).map((val, index) => (
+                                                    <SelectItem key={index} value={val[0]}>{val[0][0].toUpperCase() + val[0].slice(1)}</SelectItem>
+                                                ))} */}
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
@@ -294,6 +332,60 @@ const SignupForm = () => {
                             </FormItem>
                         )}
                     />
+                    <Separator className='col-span-2 md:col-span-4' />
+                    {/* Domicile */}
+                    <p className='subText col-span-2 md:col-span-4'>Domicile</p>
+                    <FormField
+                        control={form.control}
+                        name="domicileProvince"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>Province</FormLabel>
+                                <FormControl>
+                                    <Select onValueChange={field.onChange}>
+                                        <SelectTrigger className="bg-background">
+                                            <SelectValue placeholder="Select Province" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>Province</SelectLabel>
+                                                {State.getStatesOfCountry('PK').map((val, index) => (
+                                                    <SelectItem key={index} value={val.isoCode}>{val.name}</SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="domicileCity"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>City</FormLabel>
+                                <FormControl>
+                                    <Select onValueChange={field.onChange} disabled={domCityDisable}>
+                                        <SelectTrigger className="bg-background">
+                                            <SelectValue placeholder="Select City" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>City</SelectLabel>
+                                                {domCityList.map((val, index) => (
+                                                    <SelectItem key={index} value={val.name}>{val.name}</SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Separator className='col-span-2 md:col-span-4' />
                     {/* current address */}
                     <p className='subText col-span-2 md:col-span-4'>Current Address</p>
                     <FormField
@@ -427,6 +519,8 @@ const SignupForm = () => {
                             </FormItem>
                         )}
                     />
+                    <Separator className='col-span-2 md:col-span-4' />
+                    {/* profession */}
                     <p className='subText col-span-2 md:col-span-4'>Profession</p>
                     <FormField
                         control={form.control}
@@ -441,36 +535,37 @@ const SignupForm = () => {
                             </FormItem>
                         )}
                     /><FormField
-                    control={form.control}
-                    name="yearsOfExperience"
-                    render={({ field }) => (
-                        <FormItem className='col-span-2'>
-                            <FormLabel>Years of Experience</FormLabel>
-                            <FormControl>
-                                <Input placeholder="No of years" {...field} className="bg-background" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                {/* category */}
-                <FormField
                         control={form.control}
-                        name="pProvince"
+                        name="yearsOfExperience"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>Years of Experience</FormLabel>
+                                <FormControl>
+                                    <Input type='number' placeholder="No of years" {...field} className="bg-background"
+                                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : '')} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* category */}
+                    <FormField
+                        control={form.control}
+                        name="professionCat"
                         render={({ field }) => (
                             <FormItem className='col-span-2'>
                                 <FormLabel>Category</FormLabel>
                                 <FormControl>
                                     <Select onValueChange={field.onChange}>
                                         <SelectTrigger className="bg-background">
-                                            <SelectValue placeholder="Select Province" />
+                                            <SelectValue placeholder="Choose Category" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>Province</SelectLabel>
-                                                {State.getStatesOfCountry('PK').map((val, index) => (
-                                                    <SelectItem key={index} value={val.isoCode}>{val.name}</SelectItem>
+                                                <SelectLabel>Category</SelectLabel>
+                                                {profCategories.map((cat) => (
+                                                    <SelectItem key={cat._id} value={cat._id}>{cat.cat}</SelectItem>
                                                 ))}
                                             </SelectGroup>
                                         </SelectContent>
@@ -480,8 +575,81 @@ const SignupForm = () => {
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="professionSubCat"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>City</FormLabel>
+                                <FormControl>
+                                    <Select onValueChange={field.onChange} disabled={pSubCatFormDisabled}>
+                                        <SelectTrigger className="bg-background">
+                                            <SelectValue placeholder="Choose Sub Category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>Sub Category</SelectLabel>
+                                                {profSubCategories.map((subCats) => (
+                                                    <SelectItem key={subCats._id} value={subCats._id}>{subCats.subCat}</SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Separator className='col-span-2 md:col-span-4' />
+                    {/* password */}
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input type='password' placeholder="Password..." {...field} className="bg-background" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>Confirm Password</FormLabel>
+                                <FormControl>
+                                    <Input type='password' placeholder="Confirm Password..." {...field} className="bg-background" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                    <Button className='col-span-2 md:col-start-2' type="submit">Submit</Button>
+                    <FormField
+                        control={form.control}
+                        name="termsAccepted"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2 md:col-span-4'>
+                                <div>
+
+                                </div>
+                                <FormControl>
+                                    <div className='flex flex-row gap-2 items-center'>
+                                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                        <p>Accept <Link className='text-blue-500' href='/termsConditions'
+                                        passHref={true} rel="noopener noreferrer" target="_blank">Terms and conditions</Link>.</p>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Button className='col-span-2 md:col-start-2' type="submit"disabled={form.formState.isSubmitting || form.formState.isLoading}>
+                    {`${form.formState.isSubmitting? 'Processing...' : 'Submit'}`}</Button>
                 </form>
             </Form>
         </Card>
