@@ -1,23 +1,18 @@
 'use client'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { defaultSignupValues, SignupSchema } from '@/lib/FormSchemas/signup'
 import { Button } from "@/components/ui/button"
+import { Card } from '@/components/ui/card'
+import { Checkbox } from "@/components/ui/checkbox"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
+    FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import Image from 'next/image'
-import { Card } from '@/components/ui/card'
 import {
     Select,
     SelectContent,
@@ -27,19 +22,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Gender, listOfReligions, MaritalStatus } from '@/lib/Constants'
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { State, City, ICity } from 'country-state-city';
-import { getAllProfCats } from '@/lib/database/actions/category.actions'
-import { IprofCat, IprofSubCat } from '@/lib/database/models/category.model'
-import { Checkbox } from "@/components/ui/checkbox"
-import Link from 'next/link'
 import { Separator } from "@/components/ui/separator"
-import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
+import { Gender, listOfReligions, MaritalStatus } from '@/lib/Constants'
+import { getAllProfCats } from '@/lib/database/actions/category.actions'
 import { createUser } from '@/lib/database/actions/user.action'
-import { IUser } from '@/lib/database/models/user.model'
+import { IprofCat, IprofSubCat } from '@/lib/database/models/category.model'
+import { defaultSignupValues, SignupSchema } from '@/lib/FormSchemas/signup'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { City, ICity, State } from 'country-state-city'
+import Link from 'next/link'
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 
 
@@ -640,7 +636,7 @@ const SignupForm = () => {
                                 <FormControl>
                                     <div className='flex flex-row gap-2 items-center'>
                                         <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                        <p>Accept <Link className='text-blue-500' href='/termsConditions'
+                                        <p>Accept <Link className='text-blue-600' href='/termsConditions'
                                         passHref={true} rel="noopener noreferrer" target="_blank">Terms and conditions</Link>.</p>
                                     </div>
                                 </FormControl>
@@ -648,7 +644,7 @@ const SignupForm = () => {
                             </FormItem>
                         )}
                     />
-                    <Button className='col-span-2 md:col-start-2' type="submit"disabled={form.formState.isSubmitting || form.formState.isLoading}>
+                    <Button className='col-span-2 md:col-start-2' type="submit" disabled={form.formState.isSubmitting || form.formState.isLoading}>
                     {`${form.formState.isSubmitting? 'Processing...' : 'Submit'}`}</Button>
                 </form>
             </Form>

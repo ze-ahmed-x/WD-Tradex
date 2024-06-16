@@ -26,6 +26,7 @@ export const SignupSchema = z.object({
     .regex(/^0\d+$/, 'Invalid Mobile number'),
   email: z.string()
     .email()
+    .max(50, "Email is too long")
     .transform(str => str.trim().toLowerCase()),
   // gender: z.enum(Object.keys(Gender)as [keyof typeof Gender]), // one way to save the keys actually but we wont do it here
   gender: z.nativeEnum(Gender),
