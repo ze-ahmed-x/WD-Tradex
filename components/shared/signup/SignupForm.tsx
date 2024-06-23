@@ -38,10 +38,20 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { sendMail } from '@/lib/mail'
 
 
 
 const SignupForm = () => {
+    // // email testing
+    useEffect(() => {
+        console.log("sending mail")
+        const generateMail = async () => {
+            const mail = await sendMail({to: 'ze.ahmed.x@gmail.com', subject: "test", body: "hello world"})
+            console.log(mail)
+        }
+        generateMail()
+    }, [])
     const { toast } = useToast()
     const router = useRouter();
     const { data: session } = useSession()
