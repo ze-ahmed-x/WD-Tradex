@@ -68,6 +68,9 @@ export const SignupSchema = z.object({
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Password and confirm password doesn't match!",
   path: ["confirmPassword"],
+}).refine((data) => data.cnic === data.confirmCnic, {
+  message: "CNIC and confirm CNIC doesn't match!",
+  path: ["confirmCnic"]
 }).refine((data) => data.termsAccepted, {
   message: "Please accept terms and conditions",
   path: ["termsAccepted"]

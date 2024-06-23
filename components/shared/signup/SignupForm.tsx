@@ -36,11 +36,21 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 
 
 const SignupForm = () => {
     const { toast } = useToast()
+    const router = useRouter();
+    const { data: session } = useSession()
+    // check if user is already login
+    useEffect (() => {
+        if (session?.user) {
+            router.push(session?.user.role === 'admin'? '/admin/dashboard' : 'user/profile');
+        }
+    }, [session])
     // 1. Define your form.
     const form = useForm<z.infer<typeof SignupSchema>>({
         resolver: zodResolver(SignupSchema),
@@ -51,7 +61,21 @@ const SignupForm = () => {
         const {confirmCnic, confirmPassword, yearsOfExperience, ... user} = values;
         try {
             const newUser = await createUser({role: "seeker", yearsOfExperience: yearsOfExperience!, ...user});
-            console.log(newUser)
+            if (newUser) {
+                toast({
+                    title: "User has been created successfully!",
+                    description: "Please check your email to activate your account",
+                  })
+                  form.reset();
+                  router.push('/login')
+            }
+            else {
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh! Something went wrong.",
+                    description: "Please try again later sometime",
+                  })
+            }
         } catch (error: any) {
             toast({
                 variant: "destructive",
@@ -133,6 +157,7 @@ const SignupForm = () => {
 
     return (
         <Card className='bg-hero_BG shadow-md p-5 sm:p-10 w-full'>
+            {session && session.user? (<p>Hello <span>{session.user.firstName}</span> <span>{session.user.lastName}</span> Welcome !</p>): (
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     <FormField
@@ -647,7 +672,7 @@ const SignupForm = () => {
                     <Button className='col-span-2 md:col-start-2' type="submit" disabled={form.formState.isSubmitting || form.formState.isLoading}>
                     {`${form.formState.isSubmitting? 'Processing...' : 'Submit'}`}</Button>
                 </form>
-            </Form>
+            </Form>)}
         </Card>
     )
 }

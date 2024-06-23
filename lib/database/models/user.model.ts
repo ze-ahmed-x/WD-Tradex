@@ -24,8 +24,10 @@ export interface IUser extends Document {
     yearsOfExperience: number;
     professionCat: string;
     professionSubCat: string;
-    password: string;
     role?: string;
+    termsAccepted: boolean;
+    emailVarified?: Date;
+    password: string;
     appliedJobs?: string[]; // Array of ObjectId references as strings
 }
 
@@ -54,6 +56,7 @@ const UserSchema = new Schema({
     professionSubCat: { type: Schema.Types.ObjectId, required: true },
     role: { type: String, required: true, default: "seeker"},
     termsAccepted: { type: Boolean, required: true},
+    emailVarified: { type: Date},
     password: { type: String, required: true },
     appliedJobs: [{ type: Schema.Types.ObjectId, ref: "Jobs" }]
 },

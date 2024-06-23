@@ -22,4 +22,5 @@ export type CreateUserParams = {
     professionSubCat: string;
     password: string;
     role: string;
+    termsAccepted: boolean;
 }
