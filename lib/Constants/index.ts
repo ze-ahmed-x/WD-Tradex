@@ -108,7 +108,7 @@ export const offerInfo = {
             image: { imageSrc: seeker, alt: 'Seeker' },
             title: "Job Seekers",
             description: "Ger yourself registered with us and we’ll contact you as soon we’ll have a vacancy related to you field",
-            buttonInfo: { route: "/register", lebal: "Register" }
+            buttonInfo: { route: "/signup", lebal: "Register" }
         }
     ]
 }

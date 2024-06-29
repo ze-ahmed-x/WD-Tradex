@@ -29,17 +29,12 @@ export const authOptions: AuthOptions = {
             // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
             // You can also use the `req` object to obtain additional parameters
             // (i.e., the request IP address)
-
-            try {
                 const user = await loginUser({username: String(credentials?.username), password: String(credentials?.password)})
                 if (user) {
-                  const sUser: SessionUser = { cnic: user.cnic, dob: user.dob, email: user.email, firstName: user.firstName, gender: user.gender, id : user._id, lastName: user.lastName, mobile: user.mobile, profession: user.profession, professionCat: user.professionCat, professionSubCat: user.professionSubCat, role: String(user.role), yearsOfExperience: user.yearsOfExperience, emailVarified: user.emailVarified };
+                  const sUser: SessionUser = { cnic: user.cnic, dob: user.dob, email: user.email, firstName: user.firstName, gender: user.gender, id : user._id, lastName: user.lastName, mobile: user.mobile, profession: user.profession, professionCat: user.professionCat, professionSubCat: user.professionSubCat, role: String(user.role), yearsOfExperience: user.yearsOfExperience, emailVarified: user.emailVarified, photoUrl: user.photoUrl };
                   return sUser
                 }
                 else return  null
-            } catch (error) {
-              return null
-            }
             // const res = await fetch("/your/endpoint", {
             //   method: 'POST',
             //   body: JSON.stringify(credentials),

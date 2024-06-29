@@ -1,7 +1,8 @@
 'use server'
 import nodemailer from "nodemailer"
-// import Handlebars from "handlebars"
-// import { activationTemplate } from "./emailTemplate/activation";
+import Handlebars from "handlebars";
+import { activationTemplate } from "./EmailTemplates/activation";
+import { resetPassTemplate } from "./EmailTemplates/resetPassword";
 
 export async function sendMail({to, subject, body}: { to:string, subject:string, body:string}) {
     
@@ -32,6 +33,19 @@ export async function sendMail({to, subject, body}: { to:string, subject:string,
       } catch (error) {
         console.log("sendMail Error: " + error)
       }
+}
+
+
+export async function compileActivationTemplate(name: string, url: string) {
+    const template = Handlebars.compile(activationTemplate);
+    const htmlBody = template({ name: name, url: url});
+    return htmlBody;
+}
+
+export async function compileResetPassTemplate(name: string, url: string) {
+  const template = Handlebars.compile(resetPassTemplate);
+  const htmlBody = template({ name: name, url: url });
+  return htmlBody;
 }
 
 // export const compileActivationTemplate = (name: string, url: string)=> {

@@ -43,7 +43,7 @@ import { sendMail } from '@/lib/mail'
 
 
 const SignupForm = () => {
-    // // email testing
+    // email testing
     useEffect(() => {
         console.log("sending mail")
         const generateMail = async () => {

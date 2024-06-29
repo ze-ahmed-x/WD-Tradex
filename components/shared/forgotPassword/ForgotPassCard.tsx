@@ -15,35 +15,31 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
+import { restUserPassword } from "@/lib/database/actions/user.action"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { signIn, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import Image from "next/image"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 const formSchema = z.object({
-    username: z.string().min(2, "Invalid Login").max(50),
-    password: z.string().min(2, "Invalid Password").max(50, "Invalid Password"),
+    cnic: z.string()
+    .length(13, "Invalid CNIC")
+    .regex(/^\d+$/, 'CNIC must be numeric only, without any hashes')
 })
 
-type props = {
-    callbackUrl?: string
-}
-
-
-const LoginCard = ( {callbackUrl} : props ) => {
+const ForgotPassCard = () => {
     const { toast } =useToast()
     const { data: session } = useSession();
+    const [linkSent, setLinkSent] = useState(false)
     const router = useRouter();
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            username: "",
-            password: ""
+            cnic: ""
         },
     })
     // 2. Define a submit handler.
@@ -51,26 +47,13 @@ const LoginCard = ( {callbackUrl} : props ) => {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         try {
-            const result = await signIn("credentials", {
-                redirect: false,
-                username: values.username,
-                password: values.password
-            });
-            console.log(result);
-            if (!result?.ok) {
-                toast( {
-                    variant: 'destructive',
-                    title: "Login Failed !",
-                    description: result?.error
-                });
-            }
-            else {
-                toast( {
-                    title: "Welcome !",
-                    description: "Have a good day!",
-                })
-                router.push(callbackUrl? callbackUrl: session?.user.role === 'admin'? '/admin/dashboard' : 'user/profile'); // can we change for the 
-            }
+            const result = await restUserPassword(values.cnic)
+            toast ({
+                title: "Check Your Email",
+                description: "Resent link has been sent to you email address"
+            })
+            form.reset();
+            setLinkSent(true)
         } catch (error : any) {
             toast( {
                 variant: "destructive",
@@ -78,7 +61,6 @@ const LoginCard = ( {callbackUrl} : props ) => {
                 description: error.message,
             })
         }
-        
     }
     // check if user is already login
     useEffect (() => {
@@ -92,56 +74,47 @@ const LoginCard = ( {callbackUrl} : props ) => {
         <Card className='bg-hero_BG shadow-md p-5 sm:p-10 w-full'>
             {session && session.user? (<p>Hello <span>{session.user.firstName}</span> <span>{session.user.lastName}</span> Welcome !</p>): (
                 <CardContent className="flex flex-row gap-5 justify-center sm:justify-between items-center">
+                    {linkSent? (
+                       <div>
+                            <p className="h4 text-center">An email has been sent, please check your email.</p>
+                       </div> 
+                    ) : (
+
+                    
                 <div className="w-full sm:w-1/2">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                             <FormField
                                 control={form.control}
-                                name="username"
+                                name="cnic"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>CNIC/ Email address</FormLabel>
+                                        <FormLabel>CNIC</FormLabel>
                                         <FormControl>
                                             <Input placeholder="3123481234512" {...field} className="bg-background"/>
                                         </FormControl>
                                         <FormDescription>
-                                            Enter either CNIC or Email address
+                                            Enter CNIC without dashes
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input type="password" placeholder="Type here..." {...field} className="bg-background" />
-                                        </FormControl>
-                                        {/* <FormDescription>
-                                            Enter either CNIC or Email address
-                                        </FormDescription> */}
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <div>
-                                <p>Not a member? <Link className="text-blue-600 underline" href= '/signup'>Register</Link> 
-                                </p>
-                                <Link className="text-blue-600 underline" href='/forgotPassword'>Forgot Password</Link>
-                            </div>
 
                             
                             <Button className="w-full" type="submit" disabled={form.formState.isSubmitting || form.formState.isLoading}>
-                            {`${form.formState.isSubmitting? 'Processing...' : 'Login'}`}
+                            {`${form.formState.isSubmitting? 'Processing...' : 'Send Reset Link on Email'}`}
                             </Button>
+                            <div>
+                                <p>Need more help? Contact us on:</p>
+                                <p className="text-blue-600" > contact@tradex.com </p>
+                            </div>
                         </form>
                     </Form>
                 </div>
+                )}
                 <div className="hidden sm:block">
-                    <Image className="rounded-md" src='/images/login.png' alt="Login" height={396} width={322} />
+                    <Image className="rounded-lg shadow-md" src='/images/rocovery.jpg' alt="Login" height={360} width={498} />
                 </div>
             </CardContent>
             )}
@@ -150,4 +123,4 @@ const LoginCard = ( {callbackUrl} : props ) => {
     )
 }
 
-export default LoginCard
+export default ForgotPassCard
