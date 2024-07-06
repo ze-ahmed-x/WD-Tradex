@@ -1,6 +1,7 @@
 import ImageTextSec from '@/components/shared/ImageTextSec'
 import { aboutUs } from '@/lib/Constants'
 import React from 'react'
+import Loading from '../loading'
 
 const page = () => {
   return (

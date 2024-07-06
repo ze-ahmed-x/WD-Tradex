@@ -87,7 +87,7 @@ const ResetPassword = ({userId}: {userId:string}) => {
     useEffect (() => {
         
         if (session?.user) {
-            router.push(session?.user.role === 'admin'? '/admin/dashboard' : 'user/profile');
+            router.push(session?.user.role === 'admin'? '/admin/projects' : 'user/profile');
         }
     }, [session])
     

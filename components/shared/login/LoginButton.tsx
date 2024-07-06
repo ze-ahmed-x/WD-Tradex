@@ -28,12 +28,13 @@ const LoginButton = () => {
                 <DropdownMenuTrigger>
                     <Avatar>
                         <AvatarImage src={session?.user?.photoUrl} alt={session?.user?.firstName} />
-                        <AvatarFallback>{ session?.user?.firstName[0].toUpperCase().concat(session?.user?.lastName[0].toUpperCase()) }</AvatarFallback>
+                        <AvatarFallback>{ session?.user?.firstName[0]?.toUpperCase().concat(session?.user?.lastName[0]?.toUpperCase()) }</AvatarFallback>
                     </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={ () => router.push('/user/profile')}>Profile</DropdownMenuItem>
+                    { session?.user?.role === 'admin' && (<DropdownMenuItem onClick={ () => router.push('/admin/projects')}>Projects</DropdownMenuItem> )}
                     <DropdownMenuItem onClick={ () => signOut() }>Log Out</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

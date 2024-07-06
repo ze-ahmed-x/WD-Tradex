@@ -6,6 +6,10 @@ import User, { IUser } from "../models/user.model";
 import bcrypt from "bcrypt"
 import { compileActivationTemplate, compileResetPassTemplate, sendMail } from "@/lib/mail";
 import { signJWT, verifyJWT } from "@/lib/jwt";
+import { UTApi } from 'uploadthing/server';
+import ProfCategory, { IprofSubCat } from "../models/category.model";
+import { ObjectId } from 'mongoose';
+import mongoose from "mongoose";
 
 export async function loginUser(credentials: { username: string, password: string }) {
     if (!credentials.username || !credentials.password) {
@@ -21,7 +25,7 @@ export async function loginUser(credentials: { username: string, password: strin
         throw new Error("Invalid credentials")
     }
     if (!user.emailVarified) {
-        console.log("email is not varified")
+        // console.log("email is not varified")
         throw new Error("Please verify your email first");
     }
     user.password = "" // dont want to return the password
@@ -34,7 +38,7 @@ export async function createUser(user: CreateUserParams) {
     if (existingUser) throw new Error("User already exists")
     const newUser: IUser = await User.create({ ...user, password: await bcrypt.hash(user.password, 10) });
     if (!newUser) throw new Error("Failed to create user.");
-    console.log(newUser)
+    // console.log(newUser)
     // send email for varification
     const jwtId = signJWT({ id: newUser._id }, process.env.JWT_USER_ID_SECRET!);
     const url = `${process.env.NEXTAUTH_URL}/signup/activation/${jwtId}`;
@@ -49,7 +53,7 @@ export async function createUser(user: CreateUserParams) {
 
 // respose is not parsed in json because we are going to use this function internally
 async function findUser({ username, cnic, email, mobile }: { username?: string, cnic?: string, email?: string, mobile?: string }): Promise<IUser | null> {
-    console.log("user: " + username + " cnic: " + cnic + " email:" + email)
+    // console.log("user: " + username + " cnic: " + cnic + " email:" + email)
     if (!username && !cnic && !email && !mobile) throw new Error("Please provide at least usernam, email, CNIC or mobile");
     await connectToDatabase();
     let query = {}
@@ -83,7 +87,7 @@ async function findUser({ username, cnic, email, mobile }: { username?: string, 
     // else if (email) {
     //     query = {email: email}
     // }
-    console.log(query);
+    // console.log(query);
     const user = await User.findOne(query)
     if (!user) return null
     return user;
@@ -98,6 +102,25 @@ const findUserById = async (id: string) => {
     } catch (error) {
         return null;
     }
+}
+
+const papulateUser =  (query: any) => {
+    return query
+    .populate({ path: 'professionCat', model: ProfCategory, select: '_id cat subCats' })
+}
+
+export const findDetailedUserById = async (id: string) => {
+    await connectToDatabase();
+    const user = await papulateUser(User.findById(id));
+    if (!user) throw new Error("User not found");
+    const data = JSON.parse(JSON.stringify(user));
+    const subCategoryData = JSON.parse(JSON.stringify(data.professionCat.subCats)); 
+    const userWithCat = { ...data, 
+        professionCat: user.professionCat.cat,
+        professionSubCat: subCategoryData.find((scat:any) => scat._id === data.professionSubCat).subCat,
+        dob: new Date(user.dob)
+    }
+    return userWithCat as IUser;
 }
 
 type activateUserFunc = (jwt: string) => Promise<"userNotExist" | "success" | "alreadyActivate" | "invalidUrl" | "unexpectedError">
@@ -149,4 +172,25 @@ const hashPassword = await bcrypt.hash(password, 10);
     const updatedUser = await User.updateOne ({_id:user._id}, {password: hashPassword})
     if (updatedUser) return 'success'
     return 'uknownError'
+}
+
+type saveProfilePic = (userId: string, pictureUrl: string) => Promise<'userNotFound' | 'success' | 'uknownError'>
+export const saveProfilePictureUrl:saveProfilePic = async (userId: string, pictureUrl: string) => {
+     const user = await findUserById(userId); // this will automatically create db connection
+    if (!user) return 'userNotFound'
+    const updatedUser = await User.updateOne({_id:userId}, {photoUrl: pictureUrl} )
+    // delete old profile picture from upload thing
+    const currentImageKey = user.photoUrl?.substring(user.photoUrl?.lastIndexOf('/')+1)
+    console.log(currentImageKey)
+    if (currentImageKey) {
+        try {
+            const utapi = new UTApi();
+            await utapi.deleteFiles(currentImageKey)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
+    if (updatedUser) return "success" 
+    return "uknownError"
 }

@@ -56,7 +56,7 @@ const LoginCard = ( {callbackUrl} : props ) => {
                 username: values.username,
                 password: values.password
             });
-            console.log(result);
+            // console.log(result);
             if (!result?.ok) {
                 toast( {
                     variant: 'destructive',
@@ -69,7 +69,7 @@ const LoginCard = ( {callbackUrl} : props ) => {
                     title: "Welcome !",
                     description: "Have a good day!",
                 })
-                router.push(callbackUrl? callbackUrl: session?.user.role === 'admin'? '/admin/dashboard' : 'user/profile'); // can we change for the 
+                router.push(callbackUrl? callbackUrl: session?.user.role === 'admin'? '/admin/projects' : 'user/profile'); // can we change for the 
             }
         } catch (error : any) {
             toast( {
@@ -84,7 +84,7 @@ const LoginCard = ( {callbackUrl} : props ) => {
     useEffect (() => {
         
         if (session?.user) {
-            router.push(session?.user.role === 'admin'? '/admin/dashboard' : 'user/profile');
+            router.push(session?.user.role === 'admin'? '/admin/projects' : 'user/profile');
         }
     }, [session])
     

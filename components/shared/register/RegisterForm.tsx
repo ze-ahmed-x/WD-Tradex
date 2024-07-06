@@ -37,7 +37,7 @@ const RegisterForm = () => {
       async function onSubmit(values: z.infer<typeof RegisterFormSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        console.log(values)
+        // console.log(values)
         let uploadedImageUrl = values.imageUrl;
     if (files.length > 0) {
         console.log("uploading image...")

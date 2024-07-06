@@ -45,10 +45,10 @@ import { sendMail } from '@/lib/mail'
 const SignupForm = () => {
     // email testing
     useEffect(() => {
-        console.log("sending mail")
+        // console.log("sending mail")
         const generateMail = async () => {
             const mail = await sendMail({to: 'ze.ahmed.x@gmail.com', subject: "test", body: "hello world"})
-            console.log(mail)
+            // console.log(mail)
         }
         generateMail()
     }, [])
@@ -58,7 +58,7 @@ const SignupForm = () => {
     // check if user is already login
     useEffect (() => {
         if (session?.user) {
-            router.push(session?.user.role === 'admin'? '/admin/dashboard' : 'user/profile');
+            router.push(session?.user.role === 'admin'? '/admin/projects' : 'user/profile');
         }
     }, [session])
     // 1. Define your form.
@@ -95,7 +95,7 @@ const SignupForm = () => {
         }
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        console.log(values)
+        // console.log(values)
     }
 
     const GenderValues = Object.entries(Gender).filter(([key]) => isNaN(Number(key)))
