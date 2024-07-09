@@ -26,9 +26,8 @@ import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
 import { Gender, listOfReligions, MaritalStatus } from '@/lib/Constants'
 import { getAllProfCats } from '@/lib/database/actions/category.actions'
-import { createUser } from '@/lib/database/actions/user.action'
 import { IprofCat, IprofSubCat } from '@/lib/database/models/category.model'
-import { defaultSignupValues, SignupSchema } from '@/lib/FormSchemas/signup'
+import { baseUserSchema, defaultSignupValues } from '@/lib/FormSchemas/signup'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { City, ICity, State } from 'country-state-city'
 import Link from 'next/link'
@@ -36,62 +35,64 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { sendMail } from '@/lib/mail'
+import { IUser } from '@/lib/database/models/user.model'
+import { updateUser } from '@/lib/database/actions/user.action'
+import { getStateByCodeAndCountry } from 'country-state-city/lib/state'
+
+type props = {
+    user: IUser,
+}
 
 
 
-const SignupForm = () => {
-    // email testing
-    useEffect(() => {
-        // console.log("sending mail")
-        const generateMail = async () => {
-            const mail = await sendMail({to: 'ze.ahmed.x@gmail.com', subject: "test", body: "hello world"})
-            // console.log(mail)
-        }
-        generateMail()
-    }, [])
+
+const UserUpdateForm = ({ user }: props) => {
+    // // email testing
     const { toast } = useToast()
     const router = useRouter();
-    const { data: session } = useSession()
-    // check if user is already login
-    useEffect (() => {
-        if (session?.user) {
-            router.push(session?.user.role === 'admin'? '/admin/projects' : 'user/profile');
-        }
-    }, [session])
+    // const [defDomCity, setDefDomCity] = useState(user.domicileCity)
+    // const [defCCity, setDefCCity] = useState(user.cCity)
+    // const [defPCity, setDefPCity] = useState(user.pCity)
+    // const [defSubCat, setDefSubCat] = useState(user.professionSubCat)
     // 1. Define your form.
-    const form = useForm<z.infer<typeof SignupSchema>>({
-        resolver: zodResolver(SignupSchema),
-        defaultValues: defaultSignupValues,
+    const form = useForm<z.infer<typeof baseUserSchema>>({
+        resolver: zodResolver(baseUserSchema),
+        defaultValues: user ? {
+            ...user,
+            gender: Gender.male === user.gender ? Gender.male : Gender.female,
+            maritalStatus: user.maritalStatus as MaritalStatus,
+            religion: listOfReligions.find((r) => r === user.religion)
+        } : defaultSignupValues,
     })
     // 2. Define a submit handler.
-    async function onSubmit(values: z.infer<typeof SignupSchema>) {
-        const {confirmCnic, confirmPassword, yearsOfExperience, ... user} = values;
+    async function onSubmit(values: z.infer<typeof baseUserSchema>) {
+        const { yearsOfExperience, ...data } = values;
         try {
-            const newUser = await createUser({role: "seeker", yearsOfExperience: yearsOfExperience!, ...user});
-            if (newUser) {
+            const updatedUser = await updateUser(user._id, { ...values, role: String(user.role), yearsOfExperience: yearsOfExperience! });
+            if (updatedUser) {
                 toast({
-                    title: "User has been created successfully!",
-                    description: "Please check your email to activate your account",
-                  })
-                  form.reset();
-                  router.push('/login')
+                    title: "User has been updated successfully!",
+                    description: "In case updated information doesn't show up immediately, try refreshing the page.",
+                })
+                router.push('/user/profile')
+                router.refresh()
             }
             else {
                 toast({
                     variant: "destructive",
                     title: "Uh oh! Something went wrong.",
                     description: "Please try again later sometime",
-                  })
+                })
             }
         } catch (error: any) {
             toast({
                 variant: "destructive",
                 title: "Uh oh! Something went wrong.",
                 description: error.message,
-              })
+            })
         }
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
@@ -99,8 +100,7 @@ const SignupForm = () => {
     }
 
     const GenderValues = Object.entries(Gender).filter(([key]) => isNaN(Number(key)))
-    // console.log(listOfReligions)
-    // console.log(State.getStatesOfCountry('PK'))
+
     // *Feth Categories
     const pCategoryFormValue = form.watch().professionCat;
     const [profCategories, setProfCategories] = useState<IprofCat[]>([])
@@ -118,24 +118,45 @@ const SignupForm = () => {
         }
         getProfCats();
     }, [])
-    // sub category fetch
+
     useEffect(() => {
         if (pCategoryFormValue) {
             setpSubCatFormDisabled(false)
+            console.log("fetching sub categories..." + profCategories)
             const currentCategory = profCategories.find((val) => val._id.toString().match(pCategoryFormValue));
             setProfSubCategories(currentCategory?.subCats || []);
+            console.log("VAlue of sub cat: " + form.getValues().professionSubCat)
+            if (pCategoryFormValue !== user.professionCat) {
+                form.setValue("professionSubCat", '')
+            }
+
+            else if (pCategoryFormValue === user.professionCat
+                //&& (!profSubCategories.some(val => val._id ===  form.getValues().professionSubCat) || form.getValues().professionSubCat === '')
+            ) {
+                form.getValues().professionSubCat === user.professionSubCat ? form.setValue("professionSubCat", user.professionSubCat) : form.setValue("professionSubCat", '')
+            }
         }
-    }, [pCategoryFormValue])
+    }, [profCategories, pCategoryFormValue])
 
     // *Domicile City
     const domProvince = form.watch().domicileProvince
     const [domCityDisable, setDomCityDisable] = useState(true)
     const [domCityList, setDomCityList] = useState<ICity[]>([])
     useEffect(() => {
+        console.log("fetching domicile cities")
         if (!!domProvince) {
             setDomCityDisable(false)
             setDomCityList(City.getCitiesOfState('PK', domProvince))
             // console.log("Enabling cities: Province Value: " + cProvince)
+            if (domProvince !== user.domicileProvince) {
+                form.setValue("domicileCity", '')
+            }
+
+            else if (domProvince === user.domicileProvince
+                //&& (!profSubCategories.some(val => val._id ===  form.getValues().professionSubCat) || form.getValues().professionSubCat === '')
+            ) {
+                form.getValues().domicileCity === user.domicileCity ? form.setValue("domicileCity", user.domicileCity) : form.setValue("domicileCity", '')
+            }
         }
 
     }, [domProvince])
@@ -149,6 +170,15 @@ const SignupForm = () => {
             setcCityDisable(false)
             setCityList(City.getCitiesOfState('PK', cProvince))
             // console.log("Enabling cities: Province Value: " + cProvince)
+            if (cProvince !== user.cProvince) {
+                form.setValue("cCity", '')
+            }
+
+            else if (cProvince === user.cProvince
+                //&& (!profSubCategories.some(val => val._id ===  form.getValues().professionSubCat) || form.getValues().professionSubCat === '')
+            ) {
+                form.getValues().cCity === user.cCity ? form.setValue("cCity", user.cCity) : form.setValue("cCity", '')
+            }
         }
 
     }, [cProvince])
@@ -161,13 +191,21 @@ const SignupForm = () => {
             setpCityDisable(false)
             setpCityList(City.getCitiesOfState('PK', pProvince))
             // console.log("Enabling cities: Province Value: " + pProvince)
+            if (pProvince !== user.pProvince) {
+                form.setValue("pCity", '')
+            }
+
+            else if (pProvince === user.pProvince
+                //&& (!profSubCategories.some(val => val._id ===  form.getValues().professionSubCat) || form.getValues().professionSubCat === '')
+            ) {
+                form.getValues().pCity === user.pCity ? form.setValue("pCity", user.pCity) : form.setValue("pCity", '')
+            }
         }
 
     }, [pProvince])
 
     return (
         <Card className='bg-hero_BG shadow-md p-5 sm:p-10 w-full'>
-            {session && session.user? (<p>Hello <span>{session.user.firstName}</span> <span>{session.user.lastName}</span> Welcome !</p>): (
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     <FormField
@@ -199,33 +237,20 @@ const SignupForm = () => {
                         )}
                     />
                     <FormField
-                        control={form.control}
+                        // control={form.control}
                         name="cnic"
                         render={({ field }) => (
-                            <FormItem className='col-span-2'>
+                            <FormItem className='col-span-2' defaultValue={user.cnic} aria-readonly={true}>
                                 <FormLabel>CNIC (without dashes)</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="4567898765431" {...field} className="bg-background" />
+                                    <Input disabled={true} placeholder="4567898765431" {...field} className="bg-background" />
                                 </FormControl>
 
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="confirmCnic"
-                        render={({ field }) => (
-                            <FormItem className='col-span-2'>
-                                <FormLabel>Confirm CNIC (without dashes)</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="4567898765431" {...field} className="bg-background" />
-                                </FormControl>
 
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                     <FormField
                         control={form.control}
                         name="mobile"
@@ -241,13 +266,13 @@ const SignupForm = () => {
                         )}
                     />
                     <FormField
-                        control={form.control}
+                        // control={form.control}
                         name="email"
                         render={({ field }) => (
-                            <FormItem className='col-span-2'>
+                            <FormItem className='col-span-2' defaultValue={user.email} aria-disabled={true}>
                                 <FormLabel>Email Address</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="abc@gmail.com" {...field} className="bg-background" />
+                                    <Input disabled={true} placeholder="abc@gmail.com" {...field} className="bg-background" />
                                 </FormControl>
 
                                 <FormMessage />
@@ -261,7 +286,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>Gender</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.gender}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Select Gender" />
                                         </SelectTrigger>
@@ -316,7 +341,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>Marital Status</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange} >
+                                    <Select onValueChange={field.onChange} defaultValue={user.maritalStatus}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Marital Status" />
                                         </SelectTrigger>
@@ -345,7 +370,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>Religion</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.religion}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Select Religion" />
                                         </SelectTrigger>
@@ -373,7 +398,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>Province</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.domicileProvince}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Select Province" />
                                         </SelectTrigger>
@@ -398,7 +423,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>City</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange} disabled={domCityDisable}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.domicileCity} value={form.getValues().domicileCity}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Select City" />
                                         </SelectTrigger>
@@ -440,7 +465,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>Province</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.cProvince}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Select Province" />
                                         </SelectTrigger>
@@ -465,7 +490,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>City</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange} disabled={cCityDisable}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.cCity} value={form.getValues().cCity}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Select City" />
                                         </SelectTrigger>
@@ -507,7 +532,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>Province</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.pProvince}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Select Province" />
                                         </SelectTrigger>
@@ -532,7 +557,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>City</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange} disabled={pCityDisable}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.pCity} value={form.getValues().pCity}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Select City" />
                                         </SelectTrigger>
@@ -588,7 +613,7 @@ const SignupForm = () => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>Category</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.professionCat}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Choose Category" />
                                         </SelectTrigger>
@@ -611,9 +636,9 @@ const SignupForm = () => {
                         name="professionSubCat"
                         render={({ field }) => (
                             <FormItem className='col-span-2'>
-                                <FormLabel>City</FormLabel>
+                                <FormLabel>Sub Category</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange} disabled={pSubCatFormDisabled}>
+                                    <Select onValueChange={field.onChange} defaultValue={user.professionSubCat} value={form.getValues().professionSubCat}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Choose Sub Category" />
                                         </SelectTrigger>
@@ -633,58 +658,13 @@ const SignupForm = () => {
                     />
                     <Separator className='col-span-2 md:col-span-4' />
                     {/* password */}
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem className='col-span-2'>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input type='password' placeholder="Password..." {...field} className="bg-background" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                            <FormItem className='col-span-2'>
-                                <FormLabel>Confirm Password</FormLabel>
-                                <FormControl>
-                                    <Input type='password' placeholder="Confirm Password..." {...field} className="bg-background" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="termsAccepted"
-                        render={({ field }) => (
-                            <FormItem className='col-span-2 md:col-span-4'>
-                                <div>
-
-                                </div>
-                                <FormControl>
-                                    <div className='flex flex-row gap-2 items-center'>
-                                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                        <p>Accept <Link className='text-blue-600' href='/termsConditions'
-                                        passHref={true} rel="noopener noreferrer" target="_blank">Terms and conditions</Link>.</p>
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button className='col-span-2 md:col-start-2' type="submit" disabled={form.formState.isSubmitting || form.formState.isLoading}>
-                    {`${form.formState.isSubmitting? 'Processing...' : 'Submit'}`}</Button>
+                    <Button variant='outline' className='col-span-2' onClick={() => router.back()} disabled={form.formState.isSubmitting || form.formState.isLoading}>
+                        {`${form.formState.isSubmitting ? 'Processing...' : 'Cancel'}`}</Button>
+                    <Button className='col-span-2' type="submit" disabled={form.formState.isSubmitting || form.formState.isLoading}>
+                        {`${form.formState.isSubmitting ? 'Processing...' : 'Save'}`}</Button>
                 </form>
-            </Form>)}
+            </Form>
         </Card>
     )
 }
-
-export default SignupForm
+export default UserUpdateForm

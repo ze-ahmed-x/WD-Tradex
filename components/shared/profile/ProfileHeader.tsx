@@ -8,8 +8,10 @@ import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { useDropzone } from "@uploadthing/react";
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import { generateClientDropzoneAccept } from "uploadthing/client";
+import { Pencil2Icon } from '@radix-ui/react-icons'
 
 
 const ProfileHeader = () => {
@@ -85,6 +87,8 @@ const ProfileHeader = () => {
     return (
         <div>
             {session && session?.user ? (
+                <div className="flex flex-row justify-between content-start">
+                
                 <div className='flex flex-row gap-4 sm:gap-6 md:gap-8 lg:gap-10'>
                     <div className='flex flex-col gap-3'>
                         <div className='relative'>
@@ -139,6 +143,12 @@ const ProfileHeader = () => {
                         <h4 className='regularText font-semibold'>Contact: <span className='font-normal'>{session.user.mobile}</span></h4>
                         <h4 className='regularText font-semibold'>Email: <span className='font-normal'>{session.user.email}</span></h4>
                     </div>
+                </div>
+                <Button variant="outline" asChild>
+                    <Link href="/user/profile/edit">
+                    <span className='flex flex-row gap-2 items-center'><Pencil2Icon /> <p>Edit</p></span>
+                    </Link>
+                </Button>
                 </div>
             ) : (
                 <div>

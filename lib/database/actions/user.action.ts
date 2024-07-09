@@ -32,6 +32,14 @@ export async function loginUser(credentials: { username: string, password: strin
     return user;
 }
 
+export async function updateUser(userId: string, data: Omit<CreateUserParams, "password" | "cnic" | "email" | "termsAccepted">) {
+    const user = await findUserById(userId)
+    if (!user) throw new Error("User not found")
+    const updatedUser = await User.updateOne({ _id: user._id }, { $set: { ...data } })
+    if (!updateUser) throw new Error("Sorry, data couldn't be updated, try again later sometime.")
+    console.log(updateUser)
+    return true;
+}
 export async function createUser(user: CreateUserParams) {
     // await connectToDatabase();
     const existingUser = await findUser({ email: user.email, cnic: user.cnic, mobile: user.mobile });
@@ -93,7 +101,7 @@ async function findUser({ username, cnic, email, mobile }: { username?: string, 
     return user;
 }
 
-const findUserById = async (id: string) => {
+export const findUserById = async (id: string) => {
     await connectToDatabase();
     try {
         const user = await User.findById(id);
@@ -104,9 +112,9 @@ const findUserById = async (id: string) => {
     }
 }
 
-const papulateUser =  (query: any) => {
+const papulateUser = (query: any) => {
     return query
-    .populate({ path: 'professionCat', model: ProfCategory, select: '_id cat subCats' })
+        .populate({ path: 'professionCat', model: ProfCategory, select: '_id cat subCats' })
 }
 
 export const findDetailedUserById = async (id: string) => {
@@ -114,10 +122,11 @@ export const findDetailedUserById = async (id: string) => {
     const user = await papulateUser(User.findById(id));
     if (!user) throw new Error("User not found");
     const data = JSON.parse(JSON.stringify(user));
-    const subCategoryData = JSON.parse(JSON.stringify(data.professionCat.subCats)); 
-    const userWithCat = { ...data, 
+    const subCategoryData = JSON.parse(JSON.stringify(data.professionCat.subCats));
+    const userWithCat = {
+        ...data,
         professionCat: user.professionCat.cat,
-        professionSubCat: subCategoryData.find((scat:any) => scat._id === data.professionSubCat).subCat,
+        professionSubCat: subCategoryData.find((scat: any) => scat._id === data.professionSubCat).subCat,
         dob: new Date(user.dob)
     }
     return userWithCat as IUser;
@@ -165,22 +174,22 @@ export const restUserPassword = async (username: string) => {
 
 type setNewPassword = (userId: string, password: string) => Promise<'userNotFound' | 'success' | 'uknownError'>
 
-export const setUserPassword: setNewPassword = async (userId: string,  password: string) => {
+export const setUserPassword: setNewPassword = async (userId: string, password: string) => {
     const user = await findUserById(userId); // this will automatically create db connection
     if (!user) return 'userNotFound'
-const hashPassword = await bcrypt.hash(password, 10);
-    const updatedUser = await User.updateOne ({_id:user._id}, {password: hashPassword})
+    const hashPassword = await bcrypt.hash(password, 10);
+    const updatedUser = await User.updateOne({ _id: user._id }, { password: hashPassword })
     if (updatedUser) return 'success'
     return 'uknownError'
 }
 
 type saveProfilePic = (userId: string, pictureUrl: string) => Promise<'userNotFound' | 'success' | 'uknownError'>
-export const saveProfilePictureUrl:saveProfilePic = async (userId: string, pictureUrl: string) => {
-     const user = await findUserById(userId); // this will automatically create db connection
+export const saveProfilePictureUrl: saveProfilePic = async (userId: string, pictureUrl: string) => {
+    const user = await findUserById(userId); // this will automatically create db connection
     if (!user) return 'userNotFound'
-    const updatedUser = await User.updateOne({_id:userId}, {photoUrl: pictureUrl} )
+    const updatedUser = await User.updateOne({ _id: userId }, { photoUrl: pictureUrl })
     // delete old profile picture from upload thing
-    const currentImageKey = user.photoUrl?.substring(user.photoUrl?.lastIndexOf('/')+1)
+    const currentImageKey = user.photoUrl?.substring(user.photoUrl?.lastIndexOf('/') + 1)
     console.log(currentImageKey)
     if (currentImageKey) {
         try {
@@ -190,7 +199,7 @@ export const saveProfilePictureUrl:saveProfilePic = async (userId: string, pictu
             console.log(error)
         }
     }
-    
-    if (updatedUser) return "success" 
+
+    if (updatedUser) return "success"
     return "uknownError"
 }

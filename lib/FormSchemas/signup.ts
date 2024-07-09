@@ -4,7 +4,7 @@ import { listOfReligions } from "../Constants";
 
 const religionEnum = z.enum(listOfReligions);
 
-export const SignupSchema = z.object({
+export const baseUserSchema = z.object({
   // photoUrl: z.string().url().optional(),
   firstName: z.string()
     .min(2, "First name must be atleast 2 characters")
@@ -16,18 +16,8 @@ export const SignupSchema = z.object({
     .max(45, "Last name must be less than 45 characters")
     .regex(new RegExp("^[a-zA-Z]+$"), "Numbers and spacial characters are not allowed!")
     .transform(str => str.trim().toLowerCase()),
-  cnic: z.string()
-    .length(13, "Invalid CNIC")
-    .regex(/^\d+$/, 'CNIC must be numeric only, without any hashes'),
-  confirmCnic: z.string()
-    .length(13, "Invalid CNIC")
-    .regex(/^\d+$/, 'CNIC must be numeric only, without any hashes'),
   mobile: z.string()
     .regex(/^0\d+$/, 'Invalid Mobile number'),
-  email: z.string()
-    .email()
-    .max(50, "Email is too long")
-    .transform(str => str.trim().toLowerCase()),
   // gender: z.enum(Object.keys(Gender)as [keyof typeof Gender]), // one way to save the keys actually but we wont do it here
   gender: z.nativeEnum(Gender),
   dob: z.date(),
@@ -58,6 +48,20 @@ export const SignupSchema = z.object({
     .min(2, "Please Choose a Category"),
   professionSubCat: z.string()
     .min(2, "Please Choose a Sub Category"),
+})
+
+
+export const SignupSchema = baseUserSchema.extend({
+  cnic: z.string()
+    .length(13, "Invalid CNIC")
+    .regex(/^\d+$/, 'CNIC must be numeric only, without any hashes'),
+  confirmCnic: z.string()
+    .length(13, "Invalid CNIC")
+    .regex(/^\d+$/, 'CNIC must be numeric only, without any hashes'),
+  email: z.string()
+    .email()
+    .max(50, "Email is too long")
+    .transform(str => str.trim().toLowerCase()),
   password: z.string()
     .min(6, "Password must be at least 6 characters ")
     .max(50, "Password must be less than 50 characters"),
@@ -76,15 +80,11 @@ export const SignupSchema = z.object({
   path: ["termsAccepted"]
 });
 
-
-export const defaultSignupValues = {
+export const defaultBaseUserValues = {
   // photoUrl: "",
   firstName: "",
   lastName: "",
-  cnic: "",
-  confirmCnic: "",
   mobile: "",
-  email: "",
   gender: Gender.male, // Assuming default is empty string or you can set a specific value from Gender enum
   dob: new Date(), // Or set to null/undefined if not providing a default date
   maritalStatus: MaritalStatus.single, // Assuming default is empty string or you can set a specific value from MaritalStatus enum
@@ -101,6 +101,15 @@ export const defaultSignupValues = {
   yearsOfExperience: 0, // Or set a default number if preferred
   professionCat: "",
   professionSubCat: "",
+}
+
+
+export const defaultSignupValues = {
+  ...defaultBaseUserValues,
+  // photoUrl: "",
+  cnic: "",
+  confirmCnic: "",
+  email: "",
   password: "",
   confirmPassword: "",
   termsAccepted: false
