@@ -4,6 +4,7 @@ import "next-auth";
 import "next-auth";
 export type SessionUser = {
     id: string;
+    customUserId: string;
     photoUrl?: string;
     firstName: string;
     lastName: string;

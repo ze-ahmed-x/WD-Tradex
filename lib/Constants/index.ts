@@ -86,11 +86,11 @@ export const processInfo = {
         { seqNo: "1", description: "Requirement Initiated by Employer" },
         { seqNo: "2", description: "Verification by Embassy" },
         { seqNo: "3", description: "Permission Granted by POEPA" },
-        { seqNo: "4", description: "Short Listening of Job Seekers" },
-        { seqNo: "5", description: "Interview/ Exam" },
-        { seqNo: "6", description: "Final Selection" },
+        { seqNo: "4", description: "Collection of Applications" },
+        { seqNo: "5", description: "Shortlisting of Applicants" },
+        { seqNo: "6", description: "Tests/ Final Selection" },
         { seqNo: "7", description: "Departure Formalities/ Visa Processing" },
-        { seqNo: "8", description: "Start of new era of Life" },
+        { seqNo: "8", description: "Fly to Destination" },
     ]
 }
 

@@ -139,6 +139,7 @@ const ProfileHeader = () => {
                     <div className='flex flex-col justify-between'>
                         <h3 className='h3'>{session.user.firstName[0].toUpperCase().concat(session.user.firstName.slice(1))} {session.user.lastName[0].toUpperCase().concat(session.user.lastName.slice(1))}</h3>
                         <h4 className='regularText font-semibold'>{session.user.profession}</h4>
+                        <h4 className='regularText font-semibold'>User Id: <span className='font-normal'>TDX-{session.user.customUserId}</span></h4>
                         <h4 className='regularText font-semibold'>Yrs of Exp: <span className='font-normal'>{session.user.yearsOfExperience}</span></h4>
                         <h4 className='regularText font-semibold'>Contact: <span className='font-normal'>{session.user.mobile}</span></h4>
                         <h4 className='regularText font-semibold'>Email: <span className='font-normal'>{session.user.email}</span></h4>
@@ -153,7 +154,7 @@ const ProfileHeader = () => {
             ) : (
                 <div>
                     <h4 className='h4 text-center'>
-                        Hmm... Something is wrong here... Try to logout or log in again...
+                        Wait...
                     </h4>
                 </div>
             )}

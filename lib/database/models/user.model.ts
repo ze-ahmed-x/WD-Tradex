@@ -2,6 +2,7 @@ import { Document, Schema, model, models } from "mongoose";
 
 export interface IUser extends Document {
     _id: string;
+    customUserId: string;
     photoUrl?: string;
     firstName: string;
     lastName: string;
@@ -32,6 +33,7 @@ export interface IUser extends Document {
 }
 
 const UserSchema = new Schema({
+    customUserId: {type: Number},
     photoUrl: { type: String },
     firstName: { type: String, required: true, lowercase: true, trim: true },
     lastName: { type: String, required: true, lowercase: true, trim: true },
@@ -64,6 +66,22 @@ const UserSchema = new Schema({
         timestamps: true
     }
 )
+
+UserSchema.pre('save', async function (next) {
+    const user = this;
+    if (!user.isNew) {
+        return next();
+    }
+
+    // Find the highest customUserId in the database
+    const lastUser = await models.User.findOne().sort({ customUserId: -1 });
+    const lastUserId = lastUser ? lastUser.customUserId : 1000;
+
+    // Set the new customUserId to lastUserId + 1
+    user.customUserId = lastUserId + 1;
+
+    next();
+});
 
 const User = models.User || model('User', UserSchema);
 

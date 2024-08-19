@@ -11,8 +11,8 @@ export async function getAllProfCats() {
     return JSON.parse(JSON.stringify(profCats));
 }
 
-export async function createProfCategrory() {
-    await connectToDatabase();
+// export async function createProfCategrory() {
+    // await connectToDatabase();
     // await ProfCategory.create({
     //     cat: "test",
     //     subCats: [
@@ -157,4 +157,4 @@ export async function createProfCategrory() {
     //             ]
     //           }]
     // )
-}
+// }

@@ -24,3 +24,7 @@ export type CreateUserParams = {
     role: string;
     termsAccepted: boolean;
 }
+
+export type CreateProjectParams = {
+    
+}
