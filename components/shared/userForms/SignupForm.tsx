@@ -28,7 +28,7 @@ import { Gender, listOfReligions, MaritalStatus } from '@/lib/Constants'
 import { getAllProfCats } from '@/lib/database/actions/category.actions'
 import { createUser } from '@/lib/database/actions/user.action'
 import { IprofCat, IprofSubCat } from '@/lib/database/models/category.model'
-import { baseUserSchema, defaultSignupValues, SignupSchema } from '@/lib/FormSchemas/signup'
+import { defaultSignupValues, SignupSchema } from '@/lib/FormSchemas/signup'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { City, ICity, State } from 'country-state-city'
 import Link from 'next/link'
@@ -38,8 +38,6 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 // import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { sendMail } from '@/lib/mail'
-import { IUser } from '@/lib/database/models/user.model'
 
 
 

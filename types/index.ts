@@ -26,5 +26,54 @@ export type CreateUserParams = {
 }
 
 export type CreateProjectParams = {
-    
+    title: string;
+    country: string;
+    description: string;
+    collaboratingEntity: string;
+}
+
+
+export type CreateApplicationParams = {
+    userId: string,
+    jobId: string,
+    status?: string,
+}
+
+export type UpdateApplParams = {
+    applicationId: string,
+    status?: string,
+    comment?: string,
+}
+
+export type UpdateApplReqParams = {
+    applicationId: string,
+    requirementId: string;
+    completed?: boolean;
+    verified?: boolean;
+    comment?: string
+}
+
+export type CreateJobParams = {
+    projectId: string,
+    title: string,
+    description: string,
+    professionCat: string,
+    professionSubCat: string,
+    vacancies: number,
+}
+
+export type JobRequirementParams = {
+    jobId: string,
+    description: string,
+    optionalFlag: boolean
+}
+
+export type GetAllJobsParams = {
+    page: number, 
+    limit: number,
+    // query: string,
+    // category: string,
+    // subCategory: string,
+    // city: string,
+    // state: string,
 }
