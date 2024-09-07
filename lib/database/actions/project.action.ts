@@ -1,5 +1,5 @@
 'use server'
-import { CreateProjectParams } from "@/types";
+import { CreateProjectParams, UpdateProjectParams } from "@/types";
 import { connectToDatabase } from "..";
 import Project from "../models/project.model";
 import { handleError } from "@/lib/utils";
@@ -15,6 +15,20 @@ export async function createProject(project: CreateProjectParams) {
         })
         if (!newProject) throw new Error("Could not create project");
         return JSON.parse(JSON.stringify(newProject))
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function UpdateProject(project: UpdateProjectParams) {
+    try {
+        await connectToDatabase();
+        // should we read the document again?
+        const updatedProj = await Project.findByIdAndUpdate(project._id, {
+            ...project
+        })
+        if (!updatedProj) throw new Error("Could not Update project");
+        return JSON.parse(JSON.stringify(updatedProj))
     } catch (error) {
         handleError(error);
     }
@@ -71,14 +85,20 @@ export async function getAllProjects() {
                 $project: {
                     title: 1,
                     country: 1,
+                    description: 1,
                     collaboratingEntity: 1,
                     collaboratingEntityName: 1,
                     totalVacancies: 1,
-                    totalJobs: 1
+                    totalJobs: 1,
+                    createdAt: 1
                 }
+            },
+            {
+                $sort: { createdAt : -1}
             }
-        ]);
+        ])
         if (!projects) throw new Error("Project not found");
+        console.log(projects)
         return JSON.parse(JSON.stringify(projects));
     } catch (error) {
         handleError(error);

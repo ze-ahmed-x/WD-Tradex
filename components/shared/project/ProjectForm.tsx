@@ -39,33 +39,62 @@ import { startTransition, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Textarea } from "@/components/ui/textarea"
-import { createProject } from "@/lib/database/actions/project.action"
+import { createProject, UpdateProject } from "@/lib/database/actions/project.action"
 import { useRouter } from "next/navigation"
+import { IProject } from "@/lib/database/models/project.model"
+import { UpdateProjectParams } from "@/types"
 
+type projectFormProps = {
+  type: 'create' | 'edit',
+  _id?: string,
+  project?: IProject
+}
 
-const ProjectForm = () => {
+const ProjectForm = ({ type, _id, project }: projectFormProps) => {
   const router = useRouter()
   // 1. Define your form.
+  const defaultVals = (type === 'edit' && project) ? {
+    title: project.title,
+    country: project.country,
+    description: project.description,
+    collaboratingEntity: project.collaboratingEntity,
+  } : DefaultProjectFormValues
   const form = useForm<z.infer<typeof CreateProjectSchema>>({
     resolver: zodResolver(CreateProjectSchema),
-    defaultValues: DefaultProjectFormValues
+    defaultValues: defaultVals
   })
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof CreateProjectSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     try {
-      const project = await createProject(values)
-      if (project) {
+      let DBProject = null
+      // create of update project
+      if (type === 'create') {
+        DBProject = await createProject(values)
+      }
+      else if (type === 'edit') {
+        const updateProjVals : UpdateProjectParams = {
+          ...values, _id : project?._id!
+        }
+        DBProject = await UpdateProject(updateProjVals);
+      }
+      //After create/update rest protocols are the same
+      if (DBProject) {
         toast({
           title: "Success",
           description: "Project has been saved"
         });
         form.reset();
-        router.push('/admin/projects')
+        router.back();
+        router.refresh()
       }
-    } catch (error) {
-      
+    } catch (error : any) {
+      toast ({
+        variant: "destructive",
+        title: 'Oh uh ! Something went wrong',
+        description: error.message
+      })
     }
     console.log(values)
   }
@@ -133,7 +162,7 @@ const ProjectForm = () => {
               <FormItem className="col-span-2">
                 <FormLabel>Country</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange} defaultValue={project ? project.country : ''}>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select Country" />
                     </SelectTrigger>
@@ -155,7 +184,7 @@ const ProjectForm = () => {
               <FormItem className="col-span-2">
                 <FormLabel>Collaborating Entity</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange} defaultValue={project ? project.collaboratingEntity : ''}>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select Entity" />
                     </SelectTrigger>
@@ -167,27 +196,27 @@ const ProjectForm = () => {
                   </Select>
                 </FormControl>
                 <FormDescription>
-                <AlertDialog>
+                  <AlertDialog>
                     <AlertDialogTrigger className='pl-2 text-xs md:text-sm text-blue-500'>Create New Entity</AlertDialogTrigger>
                     <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>New Entity Creation</AlertDialogTitle>
-                            <AlertDialogDescription>
-                               <Input type="text" placeholder="Entity Name" className="bg-background" autoFocus={true}
-                               onChange={
-                                    (e) => {
-                                        setNewEntity(e.target.value)
-                                    }
-                               } 
-                               />
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => startTransition(createNewEntity)}>Save</AlertDialogAction>
-                        </AlertDialogFooter>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>New Entity Creation</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          <Input type="text" placeholder="Entity Name" className="bg-background" autoFocus={true}
+                            onChange={
+                              (e) => {
+                                setNewEntity(e.target.value)
+                              }
+                            }
+                          />
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => startTransition(createNewEntity)}>Save</AlertDialogAction>
+                      </AlertDialogFooter>
                     </AlertDialogContent>
-                </AlertDialog>
+                  </AlertDialog>
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -206,8 +235,11 @@ const ProjectForm = () => {
               </FormItem>
             )}
           />
-          <Button className="col-span-2 md:col-start-2" type="submit" disabled={form.formState.isSubmitting || form.formState.isLoading}>
-          {`${form.formState.isSubmitting? 'Processing...' : 'Submit'}`}</Button>
+          <Button variant="outline" className="col-span-2 md:col-start-1" type="button" disabled={form.formState.isSubmitting || form.formState.isLoading} onClick={() => {
+            router.back();
+          }}>Cancel</Button>
+          <Button className="col-span-2" type="submit" disabled={form.formState.isSubmitting || form.formState.isLoading}>
+            {`${form.formState.isSubmitting ? 'Processing...' : type === "edit"? 'Update' : 'Create'}`}</Button>
         </form>
       </Form>
     </Card>

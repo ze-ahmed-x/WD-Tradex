@@ -33,6 +33,11 @@ export type CreateProjectParams = {
 }
 
 
+export type UpdateProjectParams  = CreateProjectParams & {
+    _id: string;
+}
+
+
 export type CreateApplicationParams = {
     userId: string,
     jobId: string,
@@ -62,6 +67,10 @@ export type CreateJobParams = {
     vacancies: number,
 }
 
+export type UpdateJobParams = CreateJobParams & {
+    _id: string
+}
+
 export type JobRequirementParams = {
     jobId: string,
     description: string,
@@ -77,3 +86,7 @@ export type GetAllJobsParams = {
     // city: string,
     // state: string,
 }
+export type SearchParamProps = {
+    params: { id: string }
+    searchParams: { [key: string]: string | string[] | undefined }
+  }

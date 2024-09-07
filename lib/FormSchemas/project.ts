@@ -9,7 +9,8 @@ export const CreateProjectSchema = z.object({
     .min(2, "Please a select country"),
     description: z.string()
     .min(2, "Too short")
-    .max(250, "Description cannot be longer than 250 characters"),
+    .max(250, "Description cannot be longer than 250 characters")
+    .transform(str => str.trim()),
     collaboratingEntity: z.string().min(1, "Please select a collaborating entity"),
   })
 

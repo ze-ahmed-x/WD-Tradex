@@ -8,7 +8,7 @@ const page = () => {
                 <div className='flex flex-col items-center sm:gap-2 w-full'>
                     <h2 className="h2"> Projects </h2>
                     <p className="subText" > Create New Prject </p>
-                    <ProjectForm />
+                    <ProjectForm type='create'/>
                 </div>
             </div>
 

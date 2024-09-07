@@ -8,22 +8,42 @@ import {
 } from "@/components/ui/card"
 import Link from "next/link"
 
-const ProjectCard = ({id}: {id:string}) => {
+export type ProjectCardProps = {
+    _id: string,
+    title: string,
+    country: string,
+    collaboratingEntityName: string,
+    totalJobs: number,
+    totalVacancies: number,
+}
+import { Country } from 'country-state-city';
+import Image from "next/image";
+import ProjDelete from "./ProjDelete";
+
+const ProjectCard = ({ _id, title, country, collaboratingEntityName, totalJobs, totalVacancies }: ProjectCardProps) => {
+    const countryName = Country.getCountryByCode(country)?.name
     return (
-        <Link href={`/admin/projects/${id}`}>
-        <Card className="bg-hero_BG shadow-md hover:shadow-lg hover:border-foreground/15 transition-all">
-            <CardHeader>
-                <CardTitle>Card Title</CardTitle>
-                <CardDescription>Card Description</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <p>Card Content</p>
-            </CardContent>
-            <CardFooter>
-                <p>Card Footer</p>
-            </CardFooter>
+        <Card className="relative bg-hero_BG shadow-md hover:shadow-lg hover:border-foreground/15 transition-all sm:min-h-[180px] md:min-h-[210px] lg:min-h-[235px]">
+            <Link href={`/admin/projects/${_id}`}>
+                <CardHeader>
+                    <CardTitle className="h4 text-primary line-clamp-2"> {title.toUpperCase()}  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="regularText font-semibold line-clamp-1">Country:<span className="subText font-normal"> {countryName} </span></p>
+                    <p className="regularText font-semibold line-clamp-1">Sponser:<span className="subText font-normal"> {collaboratingEntityName} </span></p>
+                    <p className="regularText font-semibold line-clamp-1">Job Types:<span className="subText font-normal"> {totalJobs} </span></p>
+                    <p className="regularText font-semibold line-clamp-1">Vacancies:<span className="subText font-normal"> {totalVacancies} </span></p>
+                </CardContent>
+            </Link>
+            <div className="absolute right-2 top-2">
+                <Link href={`/admin/projects/${_id}/edit`}>
+                    <Image src='/icons/edit.svg' alt="edit" height={20} width={20} />
+                </Link>
+            </div>
+            <div className="absolute right-2 bottom-2">
+                <ProjDelete _id={_id} />
+            </div>
         </Card>
-        </Link>
     )
 }
 
