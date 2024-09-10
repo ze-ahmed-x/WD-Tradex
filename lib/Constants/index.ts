@@ -32,6 +32,25 @@ export enum UserRole {
     seeker
 }
 
+export const JobStatus = Object.freeze({
+    OPEN: 'open',
+    CLOSE: 'close'
+});
+
+export const ProjectStatus = Object.freeze({
+    OPEN: 'open',
+    CLOSE: 'close',
+    PAUSE: 'pause',
+});
+
+export const ApplicationStatus = Object.freeze({
+    applied :'applied',
+    selected : 'selected',
+    requirementsCompleted: 'requirementsCompleted',
+    approved: 'approved',
+    rejected: 'rejected'
+})
+
 export const navItems = [
     { label: 'Home', href: "/" },
     { label: 'About', href: "/about" },

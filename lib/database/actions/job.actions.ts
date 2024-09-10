@@ -5,6 +5,8 @@ import { connectToDatabase } from "..";
 import Job from "../models/job.model";
 import { handleError } from "@/lib/utils";
 import { addNewRequirementInApplications, removeRequirementFromApplications } from "./application.action";
+import { addJobInProject } from "./project.action";
+import Project from "../models/project.model";
 
 export async function createJob(job: CreateJobParams) {
     try {
@@ -13,6 +15,8 @@ export async function createJob(job: CreateJobParams) {
             ...job
         })
         if (!newJob) throw new Error("Job could not be created");
+        // add this job in the related project as well
+        await addJobInProject(job.projectId, newJob._id)
         return JSON.parse(JSON.stringify(newJob));
     } catch (error) {
         handleError(error);
@@ -22,9 +26,11 @@ export async function createJob(job: CreateJobParams) {
 export async function getJobbyId(id: string) {
     try {
         await connectToDatabase()
-        const job = await Job.findById(id);
+        const job = await Job.findById(id)
+        .populate({ path: 'projectId', model: Project, select: '_id country' })
         if (!job) throw new Error("Could not find the job");
-        return JSON.parse(JSON.stringify(job));
+        const jobObj = {...job._doc, projectId: job.projectId._id, country: job.projectId.country}
+        return JSON.parse(JSON.stringify(jobObj));
     } catch (error) {
         handleError(error);
     }

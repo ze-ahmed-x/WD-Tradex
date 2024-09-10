@@ -90,6 +90,7 @@ export async function getAllProjects() {
                     collaboratingEntityName: 1,
                     totalVacancies: 1,
                     totalJobs: 1,
+                    status:1,
                     createdAt: 1
                 }
             },
@@ -100,6 +101,40 @@ export async function getAllProjects() {
         if (!projects) throw new Error("Project not found");
         console.log(projects)
         return JSON.parse(JSON.stringify(projects));
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function addJobInProject(projectId: string, jobId: string) {
+    try {
+        await connectToDatabase();
+        // should we confirm the projectId again? maybe not
+        const project = await Project.findByIdAndUpdate(projectId, {
+            $push: {
+                jobs: jobId
+            }
+        })
+        if (!project) throw new Error("Project not found");
+        // not parsing and stringifying because it is not supposed to be passed to client side
+        return project
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function deleteJobInProject(projectId: string, jobId: string) {
+    try {
+        await connectToDatabase();
+        // should we confirm the projectId again? maybe not
+        const project = await Project.findByIdAndUpdate(projectId, {
+            $pull: {
+                jobs: jobId
+            }
+        })
+        if (!project) throw new Error("Project not found");
+        // not parsing and stringifying because it is not supposed to be passed to client side
+        return project
     } catch (error) {
         handleError(error);
     }

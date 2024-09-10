@@ -29,6 +29,8 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { createJob } from "@/lib/database/actions/job.actions"
 import { IJob } from "@/lib/database/models/job.model"
+import { useToast } from "@/components/ui/use-toast"
+import { JobStatus } from "@/lib/Constants"
 
 type JobFormProps = {
   type: 'create' | 'update'
@@ -37,6 +39,7 @@ type JobFormProps = {
 }
 
 const JobForm = ({type, projectId, job} : JobFormProps) => {
+  const { toast } = useToast()
   const router = useRouter()
   // 1. Define your form.
   const form = useForm<z.infer<typeof JobFormSchema>>({
@@ -51,6 +54,15 @@ const JobForm = ({type, projectId, job} : JobFormProps) => {
     try {
       const jobVals = { ...values, projectId: projectId }
       const job = await createJob(jobVals)
+      if (job) {
+        toast({
+          title: "Success",
+          description: "Job created successfully"
+        })
+      }
+      form.reset()
+      router.back()
+      router.refresh();
     } catch (error) {
       
     }
@@ -149,6 +161,28 @@ const JobForm = ({type, projectId, job} : JobFormProps) => {
                                         <SelectContent>
                                                 {profSubCategories.map((subCats) => (
                                                     <SelectItem key={subCats._id} value={subCats._id}>{subCats.subCat}</SelectItem>
+                                                ))}
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+          <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>Status</FormLabel>
+                                <FormControl>
+                                    <Select onValueChange={field.onChange} defaultValue= {form.getValues().status}>
+                                        <SelectTrigger className="bg-background">
+                                            <SelectValue placeholder="Job Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                                {Object.values(JobStatus).map((val, index) => (
+                                                    <SelectItem key={index} value={val}>{val}</SelectItem>
                                                 ))}
                                         </SelectContent>
                                     </Select>

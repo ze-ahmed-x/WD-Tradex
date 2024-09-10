@@ -30,6 +30,7 @@ export type CreateProjectParams = {
     country: string;
     description: string;
     collaboratingEntity: string;
+    status: string;
 }
 
 
@@ -64,6 +65,9 @@ export type CreateJobParams = {
     description: string,
     professionCat: string,
     professionSubCat: string,
+    state?: string,
+    city?: string,
+    status: string,
     vacancies: number,
 }
 

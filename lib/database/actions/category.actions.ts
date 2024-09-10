@@ -1,14 +1,18 @@
 'use server'
 
+import { handleError } from "@/lib/utils"
 import { connectToDatabase } from ".."
 import ProfCategory from "../models/category.model"
 
 export async function getAllProfCats() {
-    await connectToDatabase()
-    console.log("connected to Database")
-    const profCats = await ProfCategory.find();
-    if (!profCats) throw new Error("No Categories found");
-    return JSON.parse(JSON.stringify(profCats));
+    try {
+        await connectToDatabase();
+        const profCats = await ProfCategory.find();
+        if (!profCats) throw new Error("No Categories found");
+        return JSON.parse(JSON.stringify(profCats));
+    } catch (error) {
+        handleError(error)
+    }
 }
 
 // export async function createProfCategrory() {

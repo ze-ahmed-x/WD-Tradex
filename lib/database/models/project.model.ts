@@ -1,4 +1,6 @@
+import { ProjectStatus } from "@/lib/Constants";
 import { Schema, model, models, Document } from "mongoose";
+import { IJob } from "./job.model";
 
 export interface IProject extends Document {
     _id: string;
@@ -7,9 +9,10 @@ export interface IProject extends Document {
     description: string;
     collaboratingEntity: string;
     collaboratingEntityName?: string;
+    status: string;
     totalVacancies?: number;
     totalJobs?: number;
-    jobs?: string[];
+    jobs?: IJob[];
   }
 
 const projectSchema = new Schema({
@@ -17,6 +20,7 @@ const projectSchema = new Schema({
     country: { type: String, required: true },
     description: { type: String, required: true },
     collaboratingEntity: { type: Schema.Types.ObjectId, ref: "Entity", required: true },
+    status: { type: String, required: true, enum: Object.values(ProjectStatus), default: ProjectStatus.OPEN},
     jobs: [{ type: Schema.Types.ObjectId, ref: "Job" }]
 },
     {

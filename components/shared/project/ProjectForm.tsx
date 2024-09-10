@@ -43,6 +43,7 @@ import { createProject, UpdateProject } from "@/lib/database/actions/project.act
 import { useRouter } from "next/navigation"
 import { IProject } from "@/lib/database/models/project.model"
 import { UpdateProjectParams } from "@/types"
+import { ProjectStatus } from "@/lib/Constants"
 
 type projectFormProps = {
   type: 'create' | 'edit',
@@ -58,6 +59,7 @@ const ProjectForm = ({ type, _id, project }: projectFormProps) => {
     country: project.country,
     description: project.description,
     collaboratingEntity: project.collaboratingEntity,
+    status: project.status
   } : DefaultProjectFormValues
   const form = useForm<z.infer<typeof CreateProjectSchema>>({
     resolver: zodResolver(CreateProjectSchema),
@@ -222,6 +224,28 @@ const ProjectForm = ({ type, _id, project }: projectFormProps) => {
               </FormItem>
             )}
           />
+          <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>Status</FormLabel>
+                                <FormControl>
+                                    <Select onValueChange={field.onChange} defaultValue= {form.getValues().status}>
+                                        <SelectTrigger className="bg-background">
+                                            <SelectValue placeholder="Project Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                                {Object.values(ProjectStatus).map((val, index) => (
+                                                    <SelectItem key={index} value={val}>{val[0].toUpperCase().concat(val.slice(1))}</SelectItem>
+                                                ))}
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
           <FormField
             control={form.control}
             name="description"

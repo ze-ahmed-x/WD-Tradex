@@ -1,3 +1,4 @@
+import { JobStatus } from "@/lib/Constants";
 import { Schema, model, models, Document } from "mongoose";
 
 export interface IRequirement {
@@ -11,11 +12,13 @@ export interface IRequirement {
     projectId: string;
     title: string;
     description: string;
+    country?: string;
     state?: string;
     city?: string;
     vacancies: number;
     professionCat: string;
     professionSubCat: string;
+    status: string;
     requirements?: IRequirement[];
   }
 
@@ -34,6 +37,7 @@ const jobSchema = new Schema(
         professionCat: { type: Schema.Types.ObjectId, ref: "Category", required: true },
         professionSubCat: { type: Schema.Types.ObjectId, required: true },
         vacancies: { type: Number, required: true },
+        status: { type: String, enum: Object.values(JobStatus), default: JobStatus.OPEN, required: true},
         requirements: [{ type: requirementSchema }]
     },
     {

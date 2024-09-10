@@ -7,7 +7,6 @@ import React from 'react'
 
 const page = async () => {
   const projects = await getAllProjects() as IProject[];
-
   return (
     <section className='custom_container mt-10 min-h-screen'>
       <div className='flex flex-col items-center gap-4 sm:gap-6 md:gap-7 lg:gap-8'>
@@ -20,12 +19,18 @@ const page = async () => {
             <Link href={'/admin/projects/new'}> Create New </Link>
           </Button>
         </div>
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-7 md:gap-9'>
-          {projects && projects.map((proj) => (
-            <ProjectCard key={proj._id} _id={proj._id} collaboratingEntityName={proj.collaboratingEntityName!} country={proj.country} title={proj.title} totalJobs={proj.totalJobs!} totalVacancies={proj.totalVacancies!} />
-          ))
-          }
-        </div>
+        {(projects && projects.length > 0) ? (
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-7 md:gap-9'>
+            {projects && projects.map((proj) => (
+              <ProjectCard key={proj._id} _id={proj._id} collaboratingEntityName={proj.collaboratingEntityName!} country={proj.country} title={proj.title} totalJobs={proj.totalJobs!} totalVacancies={proj.totalVacancies!} status= {proj.status} />
+            ))
+            }
+          </div>
+        ) : (
+          <section className='custom_container mt-10 min-h-screen'>
+            <h4 className='h4 text-center'>There are no projects so far</h4>
+          </section>
+        )}
       </div>
     </section>
   )

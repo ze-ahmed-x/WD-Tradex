@@ -1,3 +1,4 @@
+import { ApplicationStatus } from "@/lib/Constants";
 import { Document, Schema, model, models } from "mongoose";
 interface IRequirementStatus {
     requirementId: string;
@@ -19,7 +20,7 @@ const applicationSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     jobId: { type: Schema.Types.ObjectId, ref: 'Job', required: true },
     projectId: { type: Schema.Types.ObjectId, ref: 'Project', required: true },
-    status: { type: String, required: true },
+    status: { type: String, enum: Object.values(ApplicationStatus), default: ApplicationStatus.applied },
     comments: [{type: String}],
     requirementsStatus: [
       {

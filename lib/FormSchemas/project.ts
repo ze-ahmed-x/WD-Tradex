@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { ProjectStatus } from "../Constants"
 export const CreateProjectSchema = z.object({
     title: z.string()
     .min(2, "Title must be at least 2 characters long")
@@ -12,6 +13,7 @@ export const CreateProjectSchema = z.object({
     .max(250, "Description cannot be longer than 250 characters")
     .transform(str => str.trim()),
     collaboratingEntity: z.string().min(1, "Please select a collaborating entity"),
+    status: z.string()
   })
 
 export const DefaultProjectFormValues = {
@@ -19,4 +21,5 @@ export const DefaultProjectFormValues = {
     country: "",
     description: "",
     collaboratingEntity: "",
+    status: ProjectStatus.OPEN
 }

@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { JobStatus } from "../Constants"
 
 export const JobFormSchema = z.object({
     title: z.string()
@@ -16,6 +17,7 @@ export const JobFormSchema = z.object({
     .min(2, "Category must be at least 2 characters long"),
     vacancies: z.number()
     .nonnegative(),
+    status: z.enum(["open", "close"]).default(JobStatus.OPEN)
   })
 
 export const JobFormDefaultValues = {
@@ -25,4 +27,5 @@ export const JobFormDefaultValues = {
         professionCat: "",
         professionSubCat: "",
         vacancies: 0,
+        status: JobStatus.OPEN
 }
