@@ -1,48 +1,75 @@
 'use client'
+
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel
+} from "@/components/ui/form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
-    DialogClose
+    DialogTrigger
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/components/ui/use-toast"
 import { addJobRequirement } from "@/lib/database/actions/job.actions"
-import { JobRequirementParams } from "@/types"
 import { useRouter } from "next/navigation"
-import { startTransition, useState } from "react"
 
 type pageProps = {
     jobId: string
 }
 
 const AddRequirement = ({ jobId }: pageProps) => {
-    const [description, setDescription] = useState('');
-    const [optional, setOptional] = useState(false)
-    const [btnDisable, setBtnDisable] = useState(false)
     const { toast } = useToast();
     const router = useRouter()
-    const addRequiremnt = () => {
+
+    const FormSchema = z.object({
+        description: z.string().min(2, "Description cannot be less than 2 characters")
+            .max(100, "Too long, please try to stay under 100 characters"),
+        optional: z.boolean().default(false),
+    })
+
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            description: '',
+            optional: false
+        },
+    })
+
+
+    async function onSubmit(values: z.infer<typeof FormSchema>) {
         try {
-            setBtnDisable(true)
-            if (description) {
-                addJobRequirement({
-                    description: description.trim(),
-                    jobId: jobId,
-                    optionalFlag: optional
-                }).then(() => {
-                    toast({
-                        title: "Success",
-                        description: "New requirement has been added"
-                    })
-                    router.refresh()
+            const jobRequirement = await addJobRequirement({
+                description: values.description,
+                optionalFlag: values.optional,
+                jobId: jobId
+            });
+            if (jobRequirement) {
+                toast({
+                    title: 'Success',
+                    description: 'New requirement has been added'
+                })
+                form.reset()
+                router.refresh()
+            }
+            else {
+                toast({
+                    variant: "destructive",
+                    title: "Oh uh !",
+                    description: "Something went wrong"
                 })
             }
         } catch (error: any) {
@@ -65,32 +92,47 @@ const AddRequirement = ({ jobId }: pageProps) => {
                         Please provide description and check if its optional.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">
-                            Description
-                        </Label>
-                        <Textarea id="description" placeholder="German Language Certificate" className="col-span-3"
-                            onChange={(e) => {
-                                setDescription(e.target.value)
-                            }} />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="username" className="text-right">
-                            Optional
-                        </Label>
-                        <Input size={2} type="checkbox" id="optional" className="col-span-1" onChange={(e) => {
-                            setOptional(e.target.checked)
-                        }} />
-                    </div>
-                </div>
-                <DialogFooter>
-                    <DialogClose>
-                        <Button type="button" onClick={() => {
-                            startTransition(addRequiremnt)
-                        }} >Save</Button>
-                    </DialogClose>
-                </DialogFooter>
+                
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                    <Textarea placeholder="Experience certificate" {...field} className="bg-background" />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                        <FormField
+                            control={form.control}
+                            name="optional"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel>
+                                            Optional
+                                        </FormLabel>
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <DialogClose>
+                            <Button disabled={form.formState.isLoading || form.formState.isSubmitting} type="submit">
+                                {(form.formState.isLoading || form.formState.isSubmitting)? 'Wait...': 'Save'}
+                            </Button>
+                        </DialogClose>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     )

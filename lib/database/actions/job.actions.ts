@@ -212,3 +212,24 @@ export async function removeJobRequirement({ jobId, requirementId}: {jobId: stri
         handleError(error);
     }
 }
+
+export async function updateJobRequirement({jobId, requirementId, description, optional} :
+    {jobId : string, requirementId: string, description: string, optional: boolean}) {
+        try {
+            await connectToDatabase();
+            const updatedJob = await Job.findOneAndUpdate(
+                {_id: jobId, 'requirements._id': requirementId},
+                {
+                    'requirements.$.description': description,
+                    'requirements.$.optionalFlag': optional
+                },
+                {
+                    new: true, runValidators: true
+                }
+            )
+            if (!updatedJob) throw new Error ("Couldn't update the job");
+            return JSON.parse(JSON.stringify(updatedJob));
+        } catch (error) {
+            handleError(error);
+        }
+    }

@@ -18,7 +18,9 @@ export const JobFormSchema = z.object({
     vacancies: z.number()
     .nonnegative(),
     status: z.enum(["open", "close"]).default(JobStatus.OPEN)
-  })
+  }).refine((data) => data.vacancies > 0, {
+    message: "At least there should be one vacancy",
+    path: ["vacancies"]})
 
 export const JobFormDefaultValues = {
         projectId: "",
