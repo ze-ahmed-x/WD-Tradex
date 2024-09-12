@@ -64,7 +64,7 @@ const page = async ({ params: { id } }: pageProps) => {
             }
           </div>
           {project.jobs && project.jobs.length > 0 &&
-            <section className='flex flex-row flex-wrap items-center justify-center gap-7 mt-8 '>
+            <section className='flex flex-row flex-wrap items-center justify-center gap-4 md:gap-6 lg:gap-12 mt-8 '>
               {project.jobs.map(job => (
                 <JobCard key={job._id} _id= {job._id} title= {job.title} city= {job.city? job.city : 'N/A'} professionCat= {profCats.find( (pCat:any) => pCat._id.toString().match(job.professionCat)).cat} projectId= {job.professionCat} state= {job.state? job.state : 'N/A'} status= {job.status} vacancies={job.vacancies} />
               ))}

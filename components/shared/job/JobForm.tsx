@@ -27,10 +27,11 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { createJob } from "@/lib/database/actions/job.actions"
+import { createJob, updateJob } from "@/lib/database/actions/job.actions"
 import { IJob } from "@/lib/database/models/job.model"
 import { useToast } from "@/components/ui/use-toast"
 import { JobStatus } from "@/lib/Constants"
+import { updateJobParams } from "@/types"
 
 type JobFormProps = {
   type: 'create' | 'update'
@@ -42,9 +43,19 @@ const JobForm = ({type, projectId, job} : JobFormProps) => {
   const { toast } = useToast()
   const router = useRouter()
   // 1. Define your form.
+  const defValues = type === 'update' &&  job?
+  {
+    projectId: job.projectId,
+    title: job.title,
+    description: job.description,
+    professionCat: job.professionCat,
+    professionSubCat: job.professionSubCat,
+    vacancies: job.vacancies,
+    status: job.status
+  } : JobFormDefaultValues
   const form = useForm<z.infer<typeof JobFormSchema>>({
     resolver: zodResolver(JobFormSchema),
-    defaultValues: JobFormDefaultValues
+    defaultValues: defValues
   })
 
   // 2. Define a submit handler.
@@ -52,19 +63,35 @@ const JobForm = ({type, projectId, job} : JobFormProps) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     try {
-      const jobVals = { ...values, projectId: projectId }
-      const job = await createJob(jobVals)
-      if (job) {
-        toast({
-          title: "Success",
-          description: "Job created successfully"
-        })
+      if (type === "create") {
+
+        const jobVals = { ...values, projectId: projectId }
+        const job = await createJob(jobVals)
+        if (job) {
+          toast({
+            title: "Success",
+            description: "Job created successfully"
+          })
+          form.reset()
+        }
       }
-      form.reset()
+      else if (type === "update" && job) {
+        const jobVals : updateJobParams = { ...values, projectId: job.projectId, _id: job._id }
+        const updatedjob = await updateJob(jobVals)
+        if (updatedjob) {
+          toast({
+            title: "Success",
+            description: "Job updated successfully"
+          })
+        }
+      }
       router.back()
       router.refresh();
-    } catch (error) {
-      
+    } catch (error:any) {
+      toast({
+        title: "Oh uh!",
+        description: error.message
+      })
     }
   }
   //*Category and Sub Category Business
@@ -79,7 +106,13 @@ const JobForm = ({type, projectId, job} : JobFormProps) => {
       // console.log(catList)
       if (catList) {
         setProfCategories(catList as IprofCat[]);
-        // console.log(profCategories)
+        // //if its edit form it would have a cat value, if we deliberately set it, it would trigger sub category value
+        // if (form.getValues().professionCat) {
+        //   console.log("found category value")
+        //   form.setValue("professionCat", "");
+        //   form.resetField("professionCat")
+        // }
+        // // console.log(profCategories)
       }
     }
     getProfCats();
@@ -91,8 +124,9 @@ const JobForm = ({type, projectId, job} : JobFormProps) => {
       const currentCategory = profCategories.find((val) => val._id.toString().match(pCategoryFormValue));
       setProfSubCategories(currentCategory?.subCats || []);
       form.resetField("professionSubCat")
+      // console.log("Did we reset the value???")
     }
-  }, [pCategoryFormValue])
+  }, [pCategoryFormValue, profCategories])
   return (
     <Card className='bg-hero_BG shadow-md p-5 sm:p-10 w-full'>
       <Form {...form}>
@@ -132,7 +166,7 @@ const JobForm = ({type, projectId, job} : JobFormProps) => {
                             <FormItem className='col-span-2'>
                                 <FormLabel>Category</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange}>
+                                    <Select onValueChange={field.onChange} defaultValue={form.getValues().professionCat}>
                                         <SelectTrigger className="bg-background">
                                             <SelectValue placeholder="Choose Category" />
                                         </SelectTrigger>
@@ -208,7 +242,7 @@ const JobForm = ({type, projectId, job} : JobFormProps) => {
             router.back();
           }}>Cancel</Button>
           <Button className="col-span-2" type="submit" disabled={form.formState.isSubmitting || form.formState.isLoading}>
-            {`${form.formState.isSubmitting ? 'Processing...' : 'Create'}`}</Button>
+            {`${form.formState.isSubmitting ? 'Processing...' : type === 'create'? 'Create': 'Update'}`}</Button>
         </form>
       </Form>
     </Card>

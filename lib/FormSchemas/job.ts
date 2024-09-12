@@ -17,7 +17,8 @@ export const JobFormSchema = z.object({
     .min(2, "Category must be at least 2 characters long"),
     vacancies: z.number()
     .nonnegative(),
-    status: z.enum(["open", "close"]).default(JobStatus.OPEN)
+    // status: z.enum(["open", "close"]).default(JobStatus.OPEN)
+    status: z.string()
   }).refine((data) => data.vacancies > 0, {
     message: "At least there should be one vacancy",
     path: ["vacancies"]})

@@ -1,12 +1,13 @@
 'use server'
 
-import { CreateJobParams, GetAllJobsParams, JobRequirementParams } from "@/types";
+import { CreateJobParams, GetAllJobsParams, JobRequirementParams, updateJobParams } from "@/types";
 import { connectToDatabase } from "..";
 import Job from "../models/job.model";
 import { handleError } from "@/lib/utils";
 import { addNewRequirementInApplications, removeRequirementFromApplications } from "./application.action";
 import { addJobInProject } from "./project.action";
 import Project from "../models/project.model";
+import ProfCategory from "../models/category.model";
 
 export async function createJob(job: CreateJobParams) {
     try {
@@ -23,13 +24,37 @@ export async function createJob(job: CreateJobParams) {
     }
 }
 
+export async function updateJob(job: updateJobParams) {
+    try {
+        await connectToDatabase()
+        const newJob = await Job.findByIdAndUpdate (job._id, {
+            ...job
+        })
+        if (!newJob) throw new Error("Job could not be created");
+        // add this job in the related project as well
+        return JSON.parse(JSON.stringify(newJob));
+    } catch (error) {
+        handleError(error);
+    }
+}
+
 export async function getJobbyId(id: string) {
     try {
         await connectToDatabase()
         const job = await Job.findById(id)
         .populate({ path: 'projectId', model: Project, select: '_id country' })
+        .populate({ path: 'professionCat', model: ProfCategory, select: '_id cat subCats'})
         if (!job) throw new Error("Could not find the job");
-        const jobObj = {...job._doc, projectId: job.projectId._id, country: job.projectId.country}
+        console.log(job.professionCat.subCats);
+        console.log(job.professionSubCat.toString());
+        const subCatVal = job.professionCat.subCats.find((sub:any) => sub._id.toString() === job.professionSubCat.toString());
+        console.log(subCatVal);
+        // professionSubCat: subCategoryData.find((scat: any) => scat._id === data.professionSubCat).subCat,
+        const jobObj = {...job._doc, projectId: job.projectId._id, country: job.projectId.country,
+            professionCat: job.professionCat._id,
+            professionCatName: job.professionCat.cat,
+            professionSubCatName:subCatVal.subCat
+        }
         return JSON.parse(JSON.stringify(jobObj));
     } catch (error) {
         handleError(error);

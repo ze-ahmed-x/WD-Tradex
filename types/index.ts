@@ -71,6 +71,10 @@ export type CreateJobParams = {
     vacancies: number,
 }
 
+export type updateJobParams = CreateJobParams & {
+    _id: string
+}
+
 export type UpdateJobParams = CreateJobParams & {
     _id: string
 }

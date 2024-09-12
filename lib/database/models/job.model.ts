@@ -17,7 +17,9 @@ export interface IRequirement {
     city?: string;
     vacancies: number;
     professionCat: string;
+    professionCatName?: string;
     professionSubCat: string;
+    professionSubCatName?: string;
     status: string;
     requirements?: IRequirement[];
   }

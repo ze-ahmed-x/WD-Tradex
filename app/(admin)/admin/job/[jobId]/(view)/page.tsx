@@ -39,6 +39,8 @@ const page = async ({params: {id, jobId}} : pageProps) => {
           <div className='grid grid-cols-1 sm:grid-cols-2 mt-10'>
             <h3 className='h4'>Country: <span className='regularText font-normal'> {job.country? Country.getCountryByCode(job.country)?.name: 'N/A'} </span> </h3>
             <h3 className='h4'>vacancies: <span className='regularText font-normal'> {job.vacancies} </span> </h3>
+            <h3 className='h4'>Category: <span className='regularText font-normal'> {job.professionCatName} </span> </h3>
+            <h3 className='h4'>Sub Category: <span className='regularText font-normal'> {job.professionSubCatName} </span> </h3>
             <h3 className='h4'>State: <span className='regularText font-normal'> {(job.state && job.country)? State.getStateByCodeAndCountry(job.state, job.country)?.name : 'N/A'} </span> </h3>
             <h3 className='h4'>City: <span className='regularText font-normal'> { job.city? job.city: 'N/A'} </span> </h3>
             <h3 className='h4'>Status: <span className={`regularText font-normal ${
