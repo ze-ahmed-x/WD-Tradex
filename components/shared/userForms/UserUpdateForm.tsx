@@ -122,10 +122,10 @@ const UserUpdateForm = ({ user }: props) => {
     useEffect(() => {
         if (pCategoryFormValue) {
             setpSubCatFormDisabled(false)
-            console.log("fetching sub categories..." + profCategories)
+            // console.log("fetching sub categories..." + profCategories)
             const currentCategory = profCategories.find((val) => val._id.toString().match(pCategoryFormValue));
             setProfSubCategories(currentCategory?.subCats || []);
-            console.log("VAlue of sub cat: " + form.getValues().professionSubCat)
+            // console.log("VAlue of sub cat: " + form.getValues().professionSubCat)
             if (pCategoryFormValue !== user.professionCat) {
                 form.setValue("professionSubCat", '')
             }
@@ -143,7 +143,7 @@ const UserUpdateForm = ({ user }: props) => {
     const [domCityDisable, setDomCityDisable] = useState(true)
     const [domCityList, setDomCityList] = useState<ICity[]>([])
     useEffect(() => {
-        console.log("fetching domicile cities")
+        // console.log("fetching domicile cities")
         if (!!domProvince) {
             setDomCityDisable(false)
             setDomCityList(City.getCitiesOfState('PK', domProvince))

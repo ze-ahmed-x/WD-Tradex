@@ -56,7 +56,6 @@ const EditRequirement = ({ jobId, requirementId, description, optional }: pagePr
 
     async function onSubmit(values: z.infer<typeof FormSchema>) {
         try {
-            console.log(values)
             const jobRequirement = await updateJobRequirement({
                 description: values.description,
                 optional: values.optional,
@@ -64,7 +63,6 @@ const EditRequirement = ({ jobId, requirementId, description, optional }: pagePr
                 requirementId: requirementId
             });
             if (jobRequirement) {
-                console.log(jobRequirement)
                 toast({
                     title: 'Success',
                     description: 'Job requirement has been updated.'

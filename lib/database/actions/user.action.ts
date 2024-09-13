@@ -190,7 +190,6 @@ export const saveProfilePictureUrl: saveProfilePic = async (userId: string, pict
     const updatedUser = await User.updateOne({ _id: userId }, { photoUrl: pictureUrl })
     // delete old profile picture from upload thing
     const currentImageKey = user.photoUrl?.substring(user.photoUrl?.lastIndexOf('/') + 1)
-    console.log(currentImageKey)
     if (currentImageKey) {
         try {
             const utapi = new UTApi();

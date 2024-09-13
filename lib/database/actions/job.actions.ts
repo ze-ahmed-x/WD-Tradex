@@ -45,10 +45,7 @@ export async function getJobbyId(id: string) {
         .populate({ path: 'projectId', model: Project, select: '_id country' })
         .populate({ path: 'professionCat', model: ProfCategory, select: '_id cat subCats'})
         if (!job) throw new Error("Could not find the job");
-        console.log(job.professionCat.subCats);
-        console.log(job.professionSubCat.toString());
         const subCatVal = job.professionCat.subCats.find((sub:any) => sub._id.toString() === job.professionSubCat.toString());
-        console.log(subCatVal);
         // professionSubCat: subCategoryData.find((scat: any) => scat._id === data.professionSubCat).subCat,
         const jobObj = {...job._doc, projectId: job.projectId._id, country: job.projectId.country,
             professionCat: job.professionCat._id,

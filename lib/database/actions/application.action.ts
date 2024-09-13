@@ -21,7 +21,7 @@ export async function createNewJobApplication(application: CreateApplicationPara
                 verified: false
             })
         })
-        console.log(requirementsStatus);
+        // console.log(requirementsStatus);
         const newApplication = await Application.create({
             ...application, projectId: jobDetail.projectId, requirementsStatus: requirementsStatus
         })
@@ -47,7 +47,7 @@ export async function updateJobApplLessRequirements(application: UpdateApplParam
             updatedFields['$push'] = {}
             updatedFields['$push']['comments'] = application.comment
         }
-        console.log(updatedFields)
+        // console.log(updatedFields)
         // const comments = existingVals.comments ? [...existingVals.comments] : [];
         // if (application.comment) {
         //     comments.push(application.comment)

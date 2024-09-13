@@ -98,7 +98,6 @@ const ProjectForm = ({ type, _id, project }: projectFormProps) => {
         description: error.message
       })
     }
-    console.log(values)
   }
   // Entity creation and related stuff
   const { toast } = useToast()

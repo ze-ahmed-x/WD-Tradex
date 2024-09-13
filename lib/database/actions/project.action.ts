@@ -99,7 +99,6 @@ export async function getAllProjects() {
             }
         ])
         if (!projects) throw new Error("Project not found");
-        console.log(projects)
         return JSON.parse(JSON.stringify(projects));
     } catch (error) {
         handleError(error);

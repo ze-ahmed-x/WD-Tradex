@@ -18,7 +18,6 @@ type pageProps = {
 const page = async ({ params: { id } }: pageProps) => {
   const project = await getProjectById(id) as IProject;
   const profCats = await getAllProfCats();
-  console.log(profCats)
   return (
     <>
       {project ?
