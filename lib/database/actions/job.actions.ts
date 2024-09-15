@@ -8,6 +8,8 @@ import { addNewRequirementInApplications, removeRequirementFromApplications } fr
 import { addJobInProject } from "./project.action";
 import Project from "../models/project.model";
 import ProfCategory from "../models/category.model";
+import { JobStatus } from "@/lib/Constants";
+import { Types } from "mongoose";
 
 export async function createJob(job: CreateJobParams) {
     try {
@@ -27,7 +29,7 @@ export async function createJob(job: CreateJobParams) {
 export async function updateJob(job: updateJobParams) {
     try {
         await connectToDatabase()
-        const newJob = await Job.findByIdAndUpdate (job._id, {
+        const newJob = await Job.findByIdAndUpdate(job._id, {
             ...job
         })
         if (!newJob) throw new Error("Job could not be created");
@@ -42,15 +44,16 @@ export async function getJobbyId(id: string) {
     try {
         await connectToDatabase()
         const job = await Job.findById(id)
-        .populate({ path: 'projectId', model: Project, select: '_id country' })
-        .populate({ path: 'professionCat', model: ProfCategory, select: '_id cat subCats'})
+            .populate({ path: 'projectId', model: Project, select: '_id country' })
+            .populate({ path: 'professionCat', model: ProfCategory, select: '_id cat subCats' })
         if (!job) throw new Error("Could not find the job");
-        const subCatVal = job.professionCat.subCats.find((sub:any) => sub._id.toString() === job.professionSubCat.toString());
+        const subCatVal = job.professionCat.subCats.find((sub: any) => sub._id.toString() === job.professionSubCat.toString());
         // professionSubCat: subCategoryData.find((scat: any) => scat._id === data.professionSubCat).subCat,
-        const jobObj = {...job._doc, projectId: job.projectId._id, country: job.projectId.country,
+        const jobObj = {
+            ...job._doc, projectId: job.projectId._id, country: job.projectId.country,
             professionCat: job.professionCat._id,
             professionCatName: job.professionCat.cat,
-            professionSubCatName:subCatVal.subCat
+            professionSubCatName: subCatVal.subCat
         }
         return JSON.parse(JSON.stringify(jobObj));
     } catch (error) {
@@ -80,56 +83,108 @@ export async function getJobDetailById(jobId: string) {
     }
 }
 
-export async function getAllJobs() {
-    try {
-        await connectToDatabase();
-        const jobs = await Job.find();
-        if (!jobs) throw new Error("Could not find any job");
-        return JSON.parse(JSON.stringify(jobs));
-    } catch (error) {
-        handleError(error);
-    }
-}
+// export async function getAllJobs() {
+//     try {
+//         await connectToDatabase();
+//         const jobs = await Job.find();
+//         if (!jobs) throw new Error("Could not find any job");
+//         return JSON.parse(JSON.stringify(jobs));
+//     } catch (error) {
+//         handleError(error);
+//     }
+// }
 
-export async function getJobsWithCountry({limit = 20, page = 1}: GetAllJobsParams) {
+export async function getAllOpenJobs({ query, category, subCategory, country, limit = 20, page = 1 }: GetAllJobsParams) {
+    const conditions: any = { status: JobStatus.OPEN }
+    if (query) {
+        conditions.title = { $regex: query, $options: 'i' }
+    }
+    if (category) {
+        conditions.professionCat = new Types.ObjectId(category)
+    }
+    if (subCategory) {
+        conditions.professionSubCat = new Types.ObjectId(subCategory)
+    }
     try {
         await connectToDatabase();
         const jobs = await Job.aggregate([
+            {
+                $match: conditions
+            },
+            {
+                $lookup: {
+                    from: 'projects', // The collection to join with (Project collection)
+                    localField: 'projectId', // The field in Job model
+                    foreignField: '_id', // The field in Project model
+                    as: 'project', // The field name to store the joined document
+                },
+            },
+            {
+                $unwind: '$project', // Flatten the array to get a single project document
+            },
+            ...(country ? [
+                {
+                    $match: {
+                        'project.country': country, // Filter by project.country if provided
+                    },
+                },
+            ]
+                : []),
+            {
+                $lookup: {
+                    from: 'profcategories',
+                    localField: 'professionCat',
+                    foreignField: '_id',
+                    as: 'categoryDetails'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$categoryDetails',
+                    preserveNullAndEmptyArrays: true,
+                }
+            },
+            
+                {
+                $facet: {
+                    totalRecords: [{ $count: 'count' }],
+                    paginatedResult: [
                         {
-                          $lookup: {
-                            from: 'projects', // The collection to join with (Project collection)
-                            localField: 'projectId', // The field in Job model
-                            foreignField: '_id', // The field in Project model
-                            as: 'project', // The field name to store the joined document
-                          },
+                            $project: {
+                                _id: 1,
+                                projectId: 1,
+                                title: 1,
+                                description: 1,
+                                state: 1,
+                                city: 1,
+                                vacancies: 1,
+                                professionSubCat: 1,
+                                country: '$project.country', // Add the country field from Project
+                                professionCatName: '$categoryDetails.cat',
+                                professionSubCatDetail: '$categoryDetails.subCats'
+                            },
                         },
                         {
-                          $unwind: '$project', // Flatten the array to get a single project document
+                            $sort: { createdAt: -1 }
                         },
                         {
-                          $project: {
-                            _id: 1,
-                            projectId: 1,
-                            title: 1,
-                            description: 1,
-                            state: 1,
-                            city: 1,
-                            vacancies: 1,
-                            country: '$project.country', // Add the country field from Project
-                          },
+                            $skip: (page - 1) * limit, // Skip records according to the page number
                         },
                         {
-                            $sort: {createdAt: -1}
-                        },
-                        {
-                          $skip: (page - 1) * limit, // Skip records according to the page number
-                        },
-                        {
-                          $limit: limit, // Limit the number of records to the specified amount per page
+                            $limit: limit, // Limit the number of records to the specified amount per page
                         }
-                      ]);
-                      if (!jobs) throw new Error('Jobs not found');
-                      return JSON.parse(JSON.stringify(jobs))
+                    ]
+
+                }
+            },
+
+        ]);
+        if (!jobs) throw new Error('Jobs not found');
+        const recordsCount = jobs[0].totalRecords.length > 0 ? jobs[0].totalRecords[0].count : 0
+        const totalPages = Math.ceil (recordsCount/limit)
+        const paginatedJobs = jobs[0].paginatedResult;
+
+        return JSON.parse(JSON.stringify({totalPages: totalPages, jobs: paginatedJobs }))
     } catch (error) {
         handleError(error);
     }
@@ -151,7 +206,7 @@ export async function getJobsWithCountry({limit = 20, page = 1}: GetAllJobsParam
 //       if (query) {
 //         matchConditions['title'] = { $regex: query, $options: 'i' }; // Case-insensitive search for title
 //       }
-  
+
 //       const jobsWithFilters = await Job.aggregate([
 //         {
 //           $lookup: {
@@ -185,7 +240,7 @@ export async function getJobsWithCountry({limit = 20, page = 1}: GetAllJobsParam
 //           $limit: limit, // Limit the number of records to the specified amount per page
 //         },
 //       ]);
-  
+
 //       return jobsWithFilters;
 //     } catch (error) {
 //       console.error('Error fetching jobs with filters:', error);
@@ -219,15 +274,15 @@ export async function addJobRequirement(req: JobRequirementParams) {
     }
 }
 
-export async function removeJobRequirement({ jobId, requirementId}: {jobId: string, requirementId: string}) {
+export async function removeJobRequirement({ jobId, requirementId }: { jobId: string, requirementId: string }) {
     try {
         await connectToDatabase();
-        const job = await Job.findOne({_id: jobId, 'requirements._id': requirementId});
+        const job = await Job.findOne({ _id: jobId, 'requirements._id': requirementId });
         if (!job) throw new Error("Could not find the Job with specified jobId and requirementId");
         const updatedJob = await Job.findByIdAndUpdate(jobId, {
-            $pull: { requirements: {_id: requirementId} }
+            $pull: { requirements: { _id: requirementId } }
         });
-        if (!updatedJob) throw new Error ("Couldn't update the job");
+        if (!updatedJob) throw new Error("Couldn't update the job");
         await removeRequirementFromApplications(jobId, requirementId)
         return JSON.parse(JSON.stringify(updatedJob));
     } catch (error) {
@@ -235,23 +290,23 @@ export async function removeJobRequirement({ jobId, requirementId}: {jobId: stri
     }
 }
 
-export async function updateJobRequirement({jobId, requirementId, description, optional} :
-    {jobId : string, requirementId: string, description: string, optional: boolean}) {
-        try {
-            await connectToDatabase();
-            const updatedJob = await Job.findOneAndUpdate(
-                {_id: jobId, 'requirements._id': requirementId},
-                {
-                    'requirements.$.description': description,
-                    'requirements.$.optionalFlag': optional
-                },
-                {
-                    new: true, runValidators: true
-                }
-            )
-            if (!updatedJob) throw new Error ("Couldn't update the job");
-            return JSON.parse(JSON.stringify(updatedJob));
-        } catch (error) {
-            handleError(error);
-        }
+export async function updateJobRequirement({ jobId, requirementId, description, optional }:
+    { jobId: string, requirementId: string, description: string, optional: boolean }) {
+    try {
+        await connectToDatabase();
+        const updatedJob = await Job.findOneAndUpdate(
+            { _id: jobId, 'requirements._id': requirementId },
+            {
+                'requirements.$.description': description,
+                'requirements.$.optionalFlag': optional
+            },
+            {
+                new: true, runValidators: true
+            }
+        )
+        if (!updatedJob) throw new Error("Couldn't update the job");
+        return JSON.parse(JSON.stringify(updatedJob));
+    } catch (error) {
+        handleError(error);
     }
+}

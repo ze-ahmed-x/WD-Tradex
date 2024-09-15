@@ -58,6 +58,7 @@ export const navItems = [
     // { label: 'Job Seekers', href: "/jobSeekers"},
     { label: 'Blog', href: "/blog" },
     { label: 'FAQs', href: "/faqs" },
+    { label: 'Jobs', href: "/jobs" },
     { label: 'Contact Us', href: "/contact" },
 ]
 

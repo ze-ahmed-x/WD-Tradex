@@ -20,6 +20,7 @@ export interface IRequirement {
     professionCatName?: string;
     professionSubCat: string;
     professionSubCatName?: string;
+    professionSubCatDetail?: any[]
     status: string;
     requirements?: IRequirement[];
   }

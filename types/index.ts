@@ -1,3 +1,5 @@
+import { IJob } from "@/lib/database/models/job.model";
+
 export type CreateUserParams = {
     firstName: string;
     lastName: string;
@@ -88,13 +90,30 @@ export type JobRequirementParams = {
 export type GetAllJobsParams = {
     page: number, 
     limit: number,
-    // query: string,
-    // category: string,
-    // subCategory: string,
-    // city: string,
-    // state: string,
+    query: string,
+    category: string,
+    subCategory: string,
+    country: string,
 }
 export type SearchParamProps = {
     params: { id: string }
     searchParams: { [key: string]: string | string[] | undefined }
+}
+
+//url related types
+export type JobSearchResult = {
+    totalPages: number,
+    jobs: IJob[]
+}
+
+export type UrlQueryParams = {
+    params: string
+    key: string
+    value: string | null
+    keysToRemove?: string[]
+  }
+  
+  export type RemoveUrlQueryParams = {
+    params: string
+    keysToRemove: string[]
   }
