@@ -18,7 +18,7 @@ const page = async ({ searchParams }: SearchParamProps) => {
   const country = searchParams?.country as string || ''
 
 
-  const jobs = await getAllOpenJobs({ query: query, category: category, subCategory: subCategory, country: country, limit: 2, page: page }) as JobSearchResult
+  const jobs = await getAllOpenJobs({ query: query, category: category, subCategory: subCategory, country: country, limit: 10, page: page }) as JobSearchResult
   //  console.log(jobs.jobs[0].professionSubCatDetail)
   //  console.log(jobs.jobs[0].professionSubCat)
   return (
@@ -30,7 +30,7 @@ const page = async ({ searchParams }: SearchParamProps) => {
         </div>
         <Separator />
         {/* <section className='md:grid grid-cols-4 w-full'> */}
-        <section className='flex gap-5 w-full'>
+        <section className='flex flex-col sm:flex-row gap-5 w-full'>
           <SearchJob />
           {/* <div className='col-span-3 p-3'> */}
           <div className='w-full'>
@@ -39,6 +39,7 @@ const page = async ({ searchParams }: SearchParamProps) => {
               {
                 jobs.jobs ?
                   (<div className='flex flex-col gap-4'>
+                    <h4 className='h4 text-center text-primary underline'>Available Jobs</h4>
                     {(jobs.jobs.map((jb, index) => (
                       <Link key={jb._id} href={`/jobs/${jb._id}`}>
                         <Card key={jb._id} className='p-5 w-full shadow-md hover:shadow-lg transition-all bg-hero_BG/25 hover:ring-1 ring-hero_BG/50 flex flex-col gap-3'>
