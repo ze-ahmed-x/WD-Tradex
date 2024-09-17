@@ -10,6 +10,7 @@ import { UTApi } from 'uploadthing/server';
 import ProfCategory, { IprofSubCat } from "../models/category.model";
 import { ObjectId } from 'mongoose';
 import mongoose from "mongoose";
+import { handleError } from "@/lib/utils";
 
 export async function loginUser(credentials: { username: string, password: string }) {
     if (!credentials.username || !credentials.password) {
@@ -33,11 +34,10 @@ export async function loginUser(credentials: { username: string, password: strin
 }
 
 export async function updateUser(userId: string, data: Omit<CreateUserParams, "password" | "cnic" | "email" | "termsAccepted">) {
-    const user = await findUserById(userId)
+    const user = await findUserByIdInternal(userId)
     if (!user) throw new Error("User not found")
     const updatedUser = await User.updateOne({ _id: user._id }, { $set: { ...data } })
     if (!updateUser) throw new Error("Sorry, data couldn't be updated, try again later sometime.")
-    console.log(updateUser)
     return true;
 }
 export async function createUser(user: CreateUserParams) {
@@ -101,7 +101,16 @@ async function findUser({ username, cnic, email, mobile }: { username?: string, 
     return user;
 }
 
-export const findUserById = async (id: string) => {
+export const findUserByIdExternal = async (id: string) => {
+    try {
+        const user = await findUserByIdInternal(id);
+        return JSON.parse(JSON.stringify(user))
+    } catch (error) {
+        handleError(error)
+    }
+}
+
+const findUserByIdInternal = async (id: string) => {
     await connectToDatabase();
     try {
         const user = await User.findById(id);
@@ -140,7 +149,7 @@ export const activateUser: activateUserFunc = async (jwt) => {
         return "invalidUrl"
     }
     const userId = payload?.id
-    const user = await findUserById(userId);
+    const user = await findUserByIdInternal(userId);
     if (!user) {
         return "userNotExist"
     }
@@ -175,7 +184,7 @@ export const restUserPassword = async (username: string) => {
 type setNewPassword = (userId: string, password: string) => Promise<'userNotFound' | 'success' | 'uknownError'>
 
 export const setUserPassword: setNewPassword = async (userId: string, password: string) => {
-    const user = await findUserById(userId); // this will automatically create db connection
+    const user = await findUserByIdInternal(userId); // this will automatically create db connection
     if (!user) return 'userNotFound'
     const hashPassword = await bcrypt.hash(password, 10);
     const updatedUser = await User.updateOne({ _id: user._id }, { password: hashPassword })
@@ -185,7 +194,7 @@ export const setUserPassword: setNewPassword = async (userId: string, password: 
 
 type saveProfilePic = (userId: string, pictureUrl: string) => Promise<'userNotFound' | 'success' | 'uknownError'>
 export const saveProfilePictureUrl: saveProfilePic = async (userId: string, pictureUrl: string) => {
-    const user = await findUserById(userId); // this will automatically create db connection
+    const user = await findUserByIdInternal(userId); // this will automatically create db connection
     if (!user) return 'userNotFound'
     const updatedUser = await User.updateOne({ _id: userId }, { photoUrl: pictureUrl })
     // delete old profile picture from upload thing

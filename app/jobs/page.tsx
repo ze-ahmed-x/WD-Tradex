@@ -37,7 +37,7 @@ const page = async ({ searchParams }: SearchParamProps) => {
             {/* <Suspense fallback= { <Loading />}> */}
             <Suspense fallback={<Loading />}>
               {
-                jobs.jobs ?
+                (jobs.jobs && jobs.jobs.length > 0)?
                   (<div className='flex flex-col gap-4'>
                     <h4 className='h4 text-center text-primary underline'>Available Jobs</h4>
                     {(jobs.jobs.map((jb, index) => (
@@ -62,7 +62,7 @@ const page = async ({ searchParams }: SearchParamProps) => {
                     {jobs.totalPages > 1 && <Pagination page={page} totalPages={jobs.totalPages} />}
                   </div>) : (
                     <section className='mt-10'>
-                      <h4 className='h4 text-center'>There are no jobs so far</h4>
+                      <h4 className='h4 text-center'>Ops! There are no jobs for now... But soon you are going to get overwhelmed. Keep your fingers crossed!</h4>
                     </section>
                   )
               }

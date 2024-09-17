@@ -1,5 +1,6 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { Separator } from '@/components/ui/separator'
+import { userStatus } from '@/lib/Constants'
 import { findDetailedUserById } from '@/lib/database/actions/user.action'
 import { formatDate } from '@/lib/utils'
 import { getStateByCodeAndCountry } from 'country-state-city/lib/state'
@@ -28,6 +29,7 @@ const ProfileDetail = async () => {
               <h4 className='regularText font-semibold'>Gender: <span className='regularText font-normal'> {user.gender}</span></h4>
               <h4 className='regularText font-semibold'>DOB: <span className='regularText font-normal'> {formatDate(user.dob)}</span></h4>
               <h4 className='regularText font-semibold'>Marital Status: <span className='regularText font-normal'> {user.maritalStatus}</span></h4>
+              <h4 className='regularText font-semibold'>You are: <span className='regularText font-normal'> {userStatus[user.status as keyof typeof userStatus]}</span></h4>
               <h4 className='regularText font-semibold'>Religion: <span className='regularText font-normal'> {user.religion}</span></h4>
               <h4 className='regularText font-semibold'>Domicile Province: <span className='regularText font-normal'> { getStateByCodeAndCountry(user.domicileProvince, "PK")?.name}</span></h4>
               <h4 className='regularText font-semibold'>Domicile City: <span className='regularText font-normal'> {user.domicileCity}</span></h4>

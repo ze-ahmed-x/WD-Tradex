@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { Gender, MaritalStatus } from "../Constants/index";
+import { Gender, MaritalStatus, userStatus } from "../Constants/index";
 import { listOfReligions } from "../Constants";
 
 const religionEnum = z.enum(listOfReligions);
@@ -22,6 +22,7 @@ export const baseUserSchema = z.object({
   gender: z.nativeEnum(Gender),
   dob: z.date(),
   maritalStatus: z.nativeEnum(MaritalStatus),
+  status: z.enum(Object.keys(userStatus) as [keyof typeof userStatus]),
   religion: religionEnum,
   domicileProvince: z.string()
     .min(2, "Please Choose a Province"),
@@ -88,6 +89,7 @@ export const defaultBaseUserValues = {
   gender: Gender.male, // Assuming default is empty string or you can set a specific value from Gender enum
   dob: new Date(), // Or set to null/undefined if not providing a default date
   maritalStatus: MaritalStatus.single, // Assuming default is empty string or you can set a specific value from MaritalStatus enum
+  status: 'unemployedLooking' as keyof typeof userStatus,
   religion: religionEnum.Values.Islam, // Assuming default is empty string or you can set a specific value from religionEnum
   domicileCity: "",
   domicileProvince: "",

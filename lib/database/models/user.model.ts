@@ -1,3 +1,4 @@
+import { userStatus } from "@/lib/Constants";
 import { Document, Schema, model, models } from "mongoose";
 
 export interface IUser extends Document {
@@ -11,6 +12,7 @@ export interface IUser extends Document {
     email: string;
     gender: string; 
     dob: Date;
+    status: string;
     maritalStatus: string;
     religion: string;
     domicileProvince: string;
@@ -42,6 +44,7 @@ const UserSchema = new Schema({
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     gender: { type: String, required: true},
     dob: { type: Date, required: true },
+    status: { type: String, required: true},
     maritalStatus: { type: String, required: true },
     religion: { type: String, required: true },
     domicileProvince: { type: String, required: true },

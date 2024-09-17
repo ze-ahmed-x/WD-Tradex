@@ -27,6 +27,13 @@ export enum MaritalStatus {
     widowed = "Widowed",
     divorced = "Divorced"
 }
+
+export enum userStatus {
+    employedLooking = "Employed but Looking for Opportunities",
+    unemployedLooking = "Unemployed Seeking Job",
+    employedNotLooking = "Employed and not interested in job",
+}
+
 export enum UserRole {
     admin,
     seeker
@@ -105,7 +112,7 @@ export const processInfo = {
     steps: [
         { seqNo: "1", description: "Requirement Initiated by Employer" },
         { seqNo: "2", description: "Verification by Embassy" },
-        { seqNo: "3", description: "Permission Granted by POEPA" },
+        { seqNo: "3", description: "Permission Granted by POE Office" },
         { seqNo: "4", description: "Collection of Applications" },
         { seqNo: "5", description: "Shortlisting of Applicants" },
         { seqNo: "6", description: "Tests/ Final Selection" },

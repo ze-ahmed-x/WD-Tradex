@@ -34,7 +34,12 @@ const LoginButton = () => {
                 <DropdownMenuContent>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={ () => router.push('/user/profile')}>Profile</DropdownMenuItem>
-                    { session?.user?.role === 'admin' && (<DropdownMenuItem onClick={ () => router.push('/admin/projects')}>Projects</DropdownMenuItem> )}
+                    { session?.user?.role === 'admin' && (
+                        <div>
+                            <DropdownMenuItem onClick={ () => router.push('/admin/projects')}>Projects</DropdownMenuItem> 
+                            <DropdownMenuItem onClick={ () => router.push('/admin/seekers')}>Seekers</DropdownMenuItem> 
+                        </div>
+                        )}
                     <DropdownMenuItem onClick={ () => signOut() }>Log Out</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

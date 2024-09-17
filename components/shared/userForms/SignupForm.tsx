@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
-import { Gender, listOfReligions, MaritalStatus } from '@/lib/Constants'
+import { Gender, listOfReligions, MaritalStatus, userStatus } from '@/lib/Constants'
 import { getAllProfCats } from '@/lib/database/actions/category.actions'
 import { createUser } from '@/lib/database/actions/user.action'
 import { IprofCat, IprofSubCat } from '@/lib/database/models/category.model'
@@ -69,7 +69,7 @@ const SignupForm = () => {
     async function onSubmit(values: z.infer<typeof SignupSchema>) {
         const {confirmCnic, confirmPassword, yearsOfExperience, ... user} = values;
         try {
-            const newUser = await createUser({role: "seeker", yearsOfExperience: yearsOfExperience!, ...user});
+            const newUser = await createUser({role: "seeker", yearsOfExperience: yearsOfExperience!, ...user, status: String(user.status) });
             if (newUser) {
                 toast({
                     title: "User has been created successfully!",
@@ -330,6 +330,32 @@ const SignupForm = () => {
                                                 {/* {Object.entries(MaritalStatus).filter(([key]) => isNaN(Number(key))).map((val, index) => (
                                                     <SelectItem key={index} value={val[0]}>{val[0][0].toUpperCase() + val[0].slice(1)}</SelectItem>
                                                 ))} */}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>You are</FormLabel>
+                                <FormControl>
+                                    <Select onValueChange={field.onChange} >
+                                        <SelectTrigger className="bg-background">
+                                            <SelectValue placeholder="Current Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>Current Status</SelectLabel>
+                                                {Object.entries(userStatus).map(([key, value]) => (
+                                                    <SelectItem key={key} value={key}>{value}</SelectItem>
+                                                ))}
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>

@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
-import { Gender, listOfReligions, MaritalStatus } from '@/lib/Constants'
+import { Gender, listOfReligions, MaritalStatus, userStatus } from '@/lib/Constants'
 import { getAllProfCats } from '@/lib/database/actions/category.actions'
 import { IprofCat, IprofSubCat } from '@/lib/database/models/category.model'
 import { baseUserSchema, defaultSignupValues } from '@/lib/FormSchemas/signup'
@@ -61,7 +61,7 @@ const UserUpdateForm = ({ user }: props) => {
     const form = useForm<z.infer<typeof baseUserSchema>>({
         resolver: zodResolver(baseUserSchema),
         defaultValues: user ? {
-            ...user,
+            ...user, status: user.status as keyof typeof userStatus,
             gender: Gender.male === user.gender ? Gender.male : Gender.female,
             maritalStatus: user.maritalStatus as MaritalStatus,
             religion: listOfReligions.find((r) => r === user.religion)
@@ -71,7 +71,7 @@ const UserUpdateForm = ({ user }: props) => {
     async function onSubmit(values: z.infer<typeof baseUserSchema>) {
         const { yearsOfExperience, ...data } = values;
         try {
-            const updatedUser = await updateUser(user._id, { ...values, role: String(user.role), yearsOfExperience: yearsOfExperience! });
+            const updatedUser = await updateUser(user._id, { ...values, role: String(user.role), yearsOfExperience: yearsOfExperience!, status: String(values.status) });
             if (updatedUser) {
                 toast({
                     title: "User has been updated successfully!",
@@ -350,6 +350,35 @@ const UserUpdateForm = ({ user }: props) => {
                                                 <SelectLabel>Marital Status</SelectLabel>
                                                 {Object.values(MaritalStatus).map((val, index) => (
                                                     <SelectItem key={index} value={val}>{val}</SelectItem>
+                                                ))}
+                                                {/* {Object.entries(MaritalStatus).filter(([key]) => isNaN(Number(key))).map((val, index) => (
+                                                    <SelectItem key={index} value={val[0]}>{val[0][0].toUpperCase() + val[0].slice(1)}</SelectItem>
+                                                ))} */}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                                <FormLabel>You are</FormLabel>
+                                <FormControl>
+                                    <Select onValueChange={field.onChange} defaultValue={user.status}>
+                                        <SelectTrigger className="bg-background">
+                                            <SelectValue placeholder="Current Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>Current Status</SelectLabel>
+                                                {Object.entries(userStatus).map(([key, value]) => (
+                                                    <SelectItem key={key} value={key}>{value}</SelectItem>
                                                 ))}
                                                 {/* {Object.entries(MaritalStatus).filter(([key]) => isNaN(Number(key))).map((val, index) => (
                                                     <SelectItem key={index} value={val[0]}>{val[0][0].toUpperCase() + val[0].slice(1)}</SelectItem>

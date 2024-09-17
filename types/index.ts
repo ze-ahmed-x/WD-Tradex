@@ -9,6 +9,7 @@ export type CreateUserParams = {
     gender: string; 
     dob: Date;
     maritalStatus: string;
+    status: string;
     religion: string;
     domicileProvince: string;
     domicileCity: string;
