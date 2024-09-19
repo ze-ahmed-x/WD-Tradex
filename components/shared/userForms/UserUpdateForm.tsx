@@ -77,7 +77,7 @@ const UserUpdateForm = ({ user }: props) => {
                     title: "User has been updated successfully!",
                     description: "In case updated information doesn't show up immediately, try refreshing the page.",
                 })
-                router.push('/user/profile')
+                router.back()
                 router.refresh()
             }
             else {

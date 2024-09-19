@@ -11,7 +11,7 @@ import { Suspense } from 'react'
 const page = async ({ searchParams }: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1
   const username = searchParams?.username as string || ''
-  const userId = searchParams?.useId as string || ''
+  const userId = searchParams?.userId as string || ''
   const category = searchParams?.cat as string || ''
   const subCategory = searchParams?.subCat as string || ''
   const status = searchParams?.status as string || ''

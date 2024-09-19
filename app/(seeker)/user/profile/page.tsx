@@ -1,12 +1,10 @@
-import Loading from '@/app/loading'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import ProfileDetail from '@/components/shared/profile/ProfileDetail'
 import ProfileHeader from '@/components/shared/profile/ProfileHeader'
 import { Separator } from '@/components/ui/separator'
-import React, { Suspense } from 'react'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { getServerSession } from 'next-auth'
 import { findDetailedUserById } from '@/lib/database/actions/user.action'
 import { IUser } from '@/lib/database/models/user.model'
+import { getServerSession } from 'next-auth'
 
 const page = async () => {
   const session = await getServerSession(authOptions)
