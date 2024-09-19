@@ -2,15 +2,13 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { Separator } from '@/components/ui/separator'
 import { UserStatus } from '@/lib/Constants'
 import { findDetailedUserById } from '@/lib/database/actions/user.action'
+import { IUser } from '@/lib/database/models/user.model'
 import { formatDate } from '@/lib/utils'
 import { getStateByCodeAndCountry } from 'country-state-city/lib/state'
 import { getServerSession } from 'next-auth'
 
 
-const ProfileDetail = async () => {
-  const session = await getServerSession(authOptions)
-  const user = await findDetailedUserById(String(session?.user.id))
-
+const ProfileDetail = async ({user} : {user: IUser}) => {
   return (
     <main>
       {user && (
@@ -27,7 +25,7 @@ const ProfileDetail = async () => {
               <h4 className='regularText font-semibold'>CNIC: <span className='regularText font-normal'> {user.cnic}</span></h4>
               <h4 className='regularText font-semibold'>Email: <span className='regularText font-normal'> {user.email}</span></h4>
               <h4 className='regularText font-semibold'>Gender: <span className='regularText font-normal'> {user.gender}</span></h4>
-              <h4 className='regularText font-semibold'>DOB: <span className='regularText font-normal'> {formatDate(user.dob)}</span></h4>
+              <h4 className='regularText font-semibold'>DOB: <span className='regularText font-normal'> {formatDate(new Date(user.dob))}</span></h4>
               <h4 className='regularText font-semibold'>Marital Status: <span className='regularText font-normal'> {user.maritalStatus}</span></h4>
               <h4 className='regularText font-semibold'>You are: <span className='regularText font-normal'> {UserStatus[user.status as keyof typeof UserStatus]}</span></h4>
               <h4 className='regularText font-semibold'>Religion: <span className='regularText font-normal'> {user.religion}</span></h4>

@@ -184,7 +184,7 @@ export const findDetailedUserById = async (id: string) => {
         professionSubCat: subCategoryData.find((scat: any) => scat._id === data.professionSubCat).subCat,
         dob: new Date(user.dob)
     }
-    return userWithCat as IUser;
+    return JSON.parse(JSON.stringify(userWithCat));
 }
 
 type activateUserFunc = (jwt: string) => Promise<"userNotExist" | "success" | "alreadyActivate" | "invalidUrl" | "unexpectedError">
