@@ -1,6 +1,6 @@
 'use server'
 
-import { CreateUserParams } from "@/types";
+import { CreateUserParams, GetAllUserParams } from "@/types";
 import { connectToDatabase } from "..";
 import User, { IUser } from "../models/user.model";
 import bcrypt from "bcrypt"
@@ -121,6 +121,52 @@ const findUserByIdInternal = async (id: string) => {
     }
 }
 
+export const getAllUser = async ({page, limit, username, userId, category, subCategory, status}:GetAllUserParams) => {
+    try {
+        // resolve conditions
+        const conditions = {
+            $and: [
+                // match fist name and last name
+                username ? // user name
+                    {
+                        $or: [{ firstName: { $regex: username, $options: 'i' } },
+                        { lastName: { $regex: username, $options: 'i' } }]
+                    }
+                    : {},
+                // search with category id
+                userId ? { customUserId: Number(userId) } : {},
+                // search with category
+                category ? { professionCat: category } : {},
+                // search with sub category
+                subCategory ? { professionSubCat: subCategory } : {},
+                status ? {status: status} : {}
+            ]
+        }
+        await connectToDatabase();
+        const userCount = await User.countDocuments(conditions)
+        if (userCount> 0) {
+            const skipAmount = (page - 1) * limit
+            const users = await User.find(conditions)
+            .sort({ createdAt: 'desc' })
+            .skip(skipAmount)
+            .limit(limit)
+            if (!users) throw new Error("Users not found");
+            return {
+                data: JSON.parse(JSON.stringify(users)),
+                userCount: userCount
+            }
+        }
+        else {
+            return {
+                data: [],
+                userCount: userCount
+            }
+        }
+    } catch (error) {
+        handleError(error)
+    }
+}
+
 const papulateUser = (query: any) => {
     return query
         .populate({ path: 'professionCat', model: ProfCategory, select: '_id cat subCats' })
@@ -193,6 +239,7 @@ export const setUserPassword: setNewPassword = async (userId: string, password: 
 }
 
 type saveProfilePic = (userId: string, pictureUrl: string) => Promise<'userNotFound' | 'success' | 'uknownError'>
+
 export const saveProfilePictureUrl: saveProfilePic = async (userId: string, pictureUrl: string) => {
     const user = await findUserByIdInternal(userId); // this will automatically create db connection
     if (!user) return 'userNotFound'

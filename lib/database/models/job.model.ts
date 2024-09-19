@@ -22,6 +22,7 @@ export interface IRequirement {
     professionSubCatName?: string;
     professionSubCatDetail?: any[]
     status: string;
+    notification: boolean;
     requirements?: IRequirement[];
   }
 
@@ -41,6 +42,7 @@ const jobSchema = new Schema(
         professionSubCat: { type: Schema.Types.ObjectId, required: true },
         vacancies: { type: Number, required: true },
         status: { type: String, enum: Object.values(JobStatus), default: JobStatus.OPEN, required: true},
+        notification: { type: Boolean},
         requirements: [{ type: requirementSchema }]
     },
     {

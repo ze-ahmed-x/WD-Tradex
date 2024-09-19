@@ -21,13 +21,23 @@ const applicationSchema = new Schema({
     jobId: { type: Schema.Types.ObjectId, ref: 'Job', required: true },
     projectId: { type: Schema.Types.ObjectId, ref: 'Project', required: true },
     status: { type: String, enum: Object.values(ApplicationStatus), default: ApplicationStatus.applied },
-    comments: [{type: String}],
+    comments: [
+      {
+        text: {type: String},
+        userId: { type: Schema.Types.ObjectId, ref: 'User' }
+      }
+    ],
     requirementsStatus: [
       {
         requirementId: {type: Schema.Types.ObjectId, required: true},
         completed: { type: Boolean, default: false },
         verified: { type: Boolean, default: false },
-        comments: [{type: String}]
+        comments: [
+          {
+            text: {type: String},
+            userId: { type: Schema.Types.ObjectId, ref: 'User' }
+          }
+        ]
       }
     ]
   }).index({ userId: 1, jobId: 1 }, { unique: true });

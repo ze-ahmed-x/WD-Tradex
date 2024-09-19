@@ -12,6 +12,7 @@ export interface IProject extends Document {
     status: string;
     totalVacancies?: number;
     totalJobs?: number;
+    notification?: boolean;
     jobs?: IJob[];
   }
 
@@ -21,6 +22,7 @@ const projectSchema = new Schema({
     description: { type: String, required: true },
     collaboratingEntity: { type: Schema.Types.ObjectId, ref: "Entity", required: true },
     status: { type: String, required: true, enum: Object.values(ProjectStatus), default: ProjectStatus.OPEN},
+    notification: {type: Boolean},
     jobs: [{ type: Schema.Types.ObjectId, ref: "Job" }]
 },
     {

@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
-import { Gender, listOfReligions, MaritalStatus, userStatus } from '@/lib/Constants'
+import { Gender, listOfReligions, MaritalStatus, UserStatus } from '@/lib/Constants'
 import { getAllProfCats } from '@/lib/database/actions/category.actions'
 import { IprofCat, IprofSubCat } from '@/lib/database/models/category.model'
 import { baseUserSchema, defaultSignupValues } from '@/lib/FormSchemas/signup'
@@ -61,7 +61,7 @@ const UserUpdateForm = ({ user }: props) => {
     const form = useForm<z.infer<typeof baseUserSchema>>({
         resolver: zodResolver(baseUserSchema),
         defaultValues: user ? {
-            ...user, status: user.status as keyof typeof userStatus,
+            ...user, status: user.status as keyof typeof UserStatus,
             gender: Gender.male === user.gender ? Gender.male : Gender.female,
             maritalStatus: user.maritalStatus as MaritalStatus,
             religion: listOfReligions.find((r) => r === user.religion)
@@ -377,7 +377,7 @@ const UserUpdateForm = ({ user }: props) => {
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectLabel>Current Status</SelectLabel>
-                                                {Object.entries(userStatus).map(([key, value]) => (
+                                                {Object.entries(UserStatus).map(([key, value]) => (
                                                     <SelectItem key={key} value={key}>{value}</SelectItem>
                                                 ))}
                                                 {/* {Object.entries(MaritalStatus).filter(([key]) => isNaN(Number(key))).map((val, index) => (

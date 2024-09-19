@@ -1,4 +1,5 @@
 import { IJob } from "@/lib/database/models/job.model";
+import { IUser } from "@/lib/database/models/user.model";
 
 export type CreateUserParams = {
     firstName: string;
@@ -88,6 +89,17 @@ export type JobRequirementParams = {
     optionalFlag: boolean
 }
 
+export type GetAllUserParams = {
+    page: number, 
+    limit: number,
+    username: string,
+    userId: string,
+    category: string,
+    subCategory: string,
+    status: string,
+    // userType: string[]
+}
+
 export type GetAllJobsParams = {
     page: number, 
     limit: number,
@@ -101,11 +113,16 @@ export type SearchParamProps = {
     searchParams: { [key: string]: string | string[] | undefined }
 }
 
-//url related types
+export type userSearchResult = {
+    userCount: number,
+    data: IUser[]
+}
+
 export type JobSearchResult = {
     totalPages: number,
     jobs: IJob[]
 }
+//url related types
 
 export type UrlQueryParams = {
     params: string

@@ -1,6 +1,5 @@
 
 'use client'
-
 import { Button } from "@/components/ui/button"
 import {
     Select,
@@ -11,65 +10,64 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { UserStatus } from "@/lib/Constants"
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils"
 
 
-import { Country } from "country-state-city"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
-
-const CountrySearch = () => {
+const StatusBasedSearch = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [country, setCountry] = useState('')
+    const [status, setStatus] = useState('')
 
     useEffect (() => {
         let newUrl = ''
-        if (country) {
+        if (status) {
             newUrl = formUrlQuery({
                 params: searchParams.toString(),
-                key: 'country',
-                value: country,
+                key: 'status',
+                value: status,
                 keysToRemove: ['page']
             })
         }
         else {
             newUrl = removeKeysFromQuery({
                 params: searchParams.toString(),
-                keysToRemove: ['country']
+                keysToRemove: ['status']
             })
         }
         router.push(newUrl, {scroll: false})
-    }, [country])
-    return (
-        <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 lg:gap-5">
-            <h4 className="normalText font-semibold">Country</h4>
+    }, [status])
+  return (
+    <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 lg:gap-5">
+            <h4 className="normalText font-semibold">User Status</h4>
             <div>
                 <Select onValueChange={(value:string) => {
-                    setCountry(value)
-                }} value= {country}>
+                    setStatus(value)
+                }} value= {status}>
                     <SelectTrigger className="w-full bg-background">
-                        <SelectValue placeholder="Select Country" />
+                        <SelectValue placeholder="Select Status" />
                     </SelectTrigger >
                     <SelectContent>
                         <SelectGroup>
-                            <SelectLabel>Countries</SelectLabel>
-                            {Country.getAllCountries().map((cntry) => (
-                                <SelectItem key={cntry.isoCode} value={cntry.isoCode} > {cntry.name} </SelectItem>
+                            <SelectLabel>Status</SelectLabel>
+                            {Object.entries(UserStatus).map(([key, value]) => (
+                                <SelectItem key={key} value={key} > {value} </SelectItem>
                             ))}
                         </SelectGroup>
                     </SelectContent>
                 </Select>
                 <Button variant={"ghost"} size={"sm"} className="text-blue-500 underline text-left size-fit"
-                disabled= {country? false: true}
+                disabled= {status? false: true}
                 onClick={() => {
-                    setCountry('')
+                    setStatus('')
                 }}
-                >Reset Country</Button>
+                >Reset status</Button>
             </div>
         </div>
-    )
+  )
 }
 
-export default CountrySearch
+export default StatusBasedSearch

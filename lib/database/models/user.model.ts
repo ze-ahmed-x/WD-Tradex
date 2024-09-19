@@ -1,4 +1,4 @@
-import { userStatus } from "@/lib/Constants";
+import { UserStatus } from "@/lib/Constants";
 import { Document, Schema, model, models } from "mongoose";
 
 export interface IUser extends Document {

@@ -12,7 +12,7 @@ const user = await findUserByIdExternal(String(session?.user.id)) as IUser
   return (
     <section className='custom_container mt-10 min-h-screen'>
       { session && session?.user && user && (
-        <UserUpdateForm user={user} />
+        <UserUpdateForm key={user._id} user={user} />
         // <p>just testing</p>
       )}
     </section>

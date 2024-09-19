@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
-import { Gender, listOfReligions, MaritalStatus, userStatus } from '@/lib/Constants'
+import { Gender, listOfReligions, MaritalStatus, UserStatus } from '@/lib/Constants'
 import { getAllProfCats } from '@/lib/database/actions/category.actions'
 import { createUser } from '@/lib/database/actions/user.action'
 import { IprofCat, IprofSubCat } from '@/lib/database/models/category.model'
@@ -353,7 +353,7 @@ const SignupForm = () => {
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectLabel>Current Status</SelectLabel>
-                                                {Object.entries(userStatus).map(([key, value]) => (
+                                                {Object.entries(UserStatus).map(([key, value]) => (
                                                     <SelectItem key={key} value={key}>{value}</SelectItem>
                                                 ))}
                                             </SelectGroup>

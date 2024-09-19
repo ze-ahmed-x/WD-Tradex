@@ -28,7 +28,7 @@ export enum MaritalStatus {
     divorced = "Divorced"
 }
 
-export enum userStatus {
+export enum UserStatus {
     employedLooking = "Employed but Looking for Opportunities",
     unemployedLooking = "Unemployed Seeking Job",
     employedNotLooking = "Employed and not interested in job",
