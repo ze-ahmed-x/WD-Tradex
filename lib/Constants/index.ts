@@ -247,3 +247,55 @@ export const services = [
         ]
     }
 ]
+
+export const termsConditions = {
+    title: "Terms and Conditions for Registration and Use of Services",
+    discription: "Please read bellow terms and conditions for registration and use",
+    detail: [
+        {
+            heading: "Acceptance of Terms",
+            text: "By registering on this platform, you agree to be bound by these terms and conditions. If you do not accept these terms, you may not use the services provided by this platform."
+        },
+        {
+            heading: "User Eligibility",
+            text: "You must be at least 18 years of age and legally capable of entering into binding contracts to register on this platform."
+        },
+        {
+            heading: "Account Security",
+            text: "You are responsible for maintaining the confidentiality of your account credentials. You are liable for any activity under your account, and you must notify the platform immediately if there is any unauthorized access or breach."
+        },
+        {
+            heading: "Accuracy of Information",
+            text: "You agree to provide accurate and complete information during registration and while applying for jobs. Falsifying or omitting important information may result in the suspension or termination of your account."
+        },
+        {
+            heading: "Use of Personal Information",
+            text: "By registering, you agree that the platform may use your personal information as outlined in the Privacy Policy, including sharing your profile with potential employers (i.e., admins). You also acknowledge that you may be contacted by employers or admins through the contact information provided."
+        },
+        {
+            heading: "Job Applications",
+            text: "Once registered, you can apply for jobs through the platform. Each application is subject to the specific requirements and terms set by the employers. The platform does not guarantee job placement."
+        },
+        {
+            heading: "No Guarantee of Employment",
+            text: "The platform acts as an intermediary between you and employers. We do not guarantee job placements, interviews, or any employment outcomes. Your interaction with employers is independent of the platform."
+        },
+        {
+            heading: "Termination",
+            text: "You can terminate your account at any time. The platform also reserves the right to suspend or terminate your account if you violate these terms, engage in fraudulent activities, or misuse the platform."
+        },
+        {
+            heading: "Modifications to Terms",
+            text: "The platform reserves the right to modify these terms and conditions at any time. Changes will be communicated through the platform, and your continued use of the services signifies your acceptance of any updated terms."
+        },
+        {
+            heading: "Governing Law",
+            text: "These terms and conditions are governed by the laws of Pakistan, and any disputes shall be resolved in the courts of Pakistan."
+        },
+        {
+            heading: "Contact",
+            text: "If you have any questions regarding these terms and conditions, you may contact us at contact@tradexpioneer.com."
+        },
+        
+    ]
+}

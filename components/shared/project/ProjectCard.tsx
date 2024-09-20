@@ -47,9 +47,9 @@ const ProjectCard = ({ _id, title, country, collaboratingEntityName, totalJobs, 
                     <Image src='/icons/edit.svg' alt="edit" height={20} width={20} />
                 </Link>
             </div>
-            <div className="absolute right-2 bottom-2">
+            {/* <div className="absolute right-2 bottom-2">
                 <ProjDelete _id={_id} />
-            </div>
+            </div> */}
         </Card>
     )
 }

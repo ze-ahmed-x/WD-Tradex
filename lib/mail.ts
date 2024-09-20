@@ -5,10 +5,12 @@ import { activationTemplate } from "./EmailTemplates/activation";
 import { resetPassTemplate } from "./EmailTemplates/resetPassword";
 
 export async function sendMail({to, subject, body}: { to:string, subject:string, body:string}) {
+  const host = process.env.SMTP_host;
+  const port = Number(process.env.SMTP_PORT);
     
     var transport = nodemailer.createTransport({
-        host: "sandbox.smtp.mailtrap.io",
-        port: 2525,
+        host: host,
+        port: port,
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS
@@ -24,7 +26,7 @@ export async function sendMail({to, subject, body}: { to:string, subject:string,
     //   }
       try {
         const sendMail = await transport.sendMail({
-            from: 'no-reply@tradex.com',
+            from: 'no-reply@tradexpioneer.com',
             to: to,
             subject: subject,
             html: body
