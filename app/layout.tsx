@@ -3,9 +3,13 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/header/Navbar";
 import Footer from "@/components/shared/footer/Footer";
+import { Toaster } from "@/components/ui/toaster"
+import NextAuthProvider from "@/provider/NextAuthProvider";
 
-const poppins = Poppins({ subsets: ["latin"],
-weight: ["100", "200", "300", "400", "500", "600","700", "800", "900"]});
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+});
 
 export const metadata: Metadata = {
   title: "Tradex",
@@ -20,10 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
-      <Navbar />
-        {children}
-      <Footer />
-        </body>
+        <NextAuthProvider>
+          <Toaster />
+          <Navbar />
+          {children}
+          <Footer />
+        </NextAuthProvider>
+      </body>
     </html>
   );
 }

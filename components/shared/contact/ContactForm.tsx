@@ -16,8 +16,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { sendMail } from "@/lib/mail"
+import { useToast } from "@/components/ui/use-toast"
 
 const ContactForm = () => {
+  const { toast } = useToast()
     // 1. Define your form.
   const form = useForm<z.infer<typeof contactMeFormSchema>>({
     resolver: zodResolver(contactMeFormSchema),
@@ -31,10 +34,34 @@ const ContactForm = () => {
   })
  
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof contactMeFormSchema>) {
+  async function onSubmit(values: z.infer<typeof contactMeFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
+    try {
+      const mail =  await sendMail({
+        to: 'contact@tradexpioneer.com',
+        subject: "Contac from Website",
+        body: `<div>
+          <p>Name: <span>${values.name}</span></p>
+          <p>Email: <span>${values.email}</span></p>
+          <p>Contact: <span>${values.mobile}</span></p>
+          <p>Subject:</p>
+          <p>${values.subject}</p>
+          <p>message: </p>
+          <p>${values.message}</p>
+        </div>`
+      })
+      toast({
+        title: "Email sent",
+        description: "We'll get back to you soon"
+      })
+    } catch (error) {
+      toast({
+        title: "Oh Uh!",
+        description: "Something went wrong, try again later sometime."
+      })
+    }
+    form.reset();
   }
   return (
     <Form {...form}>
@@ -121,7 +148,7 @@ const ContactForm = () => {
                 )}
               />
               </div>
-        <Button type="submit" className="w-full">Send Message</Button>
+        <Button disabled = {form.formState.isSubmitting || form.formState.isLoading} type="submit" className="w-full">{form.formState.isSubmitting? 'Sending...': 'Send Message'}</Button>
       </form>
     </Form>
   )

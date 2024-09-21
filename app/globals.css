@@ -71,6 +71,9 @@
   .custom_container {
     @apply mx-4 sm:mx-8 md:mx-16 lg:mx-32
   }
+  .datePicker {
+    width: 100%;
+  }
 }
 
 @layer utilities {
