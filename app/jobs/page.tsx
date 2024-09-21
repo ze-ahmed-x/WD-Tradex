@@ -43,7 +43,7 @@ const page = async ({ searchParams }: SearchParamProps) => {
                     {(jobs.jobs.map((jb, index) => (
                       <Link key={jb._id} href={`/jobs/${jb._id}`}>
                         <Card key={jb._id} className='p-5 w-full shadow-md hover:shadow-lg transition-all bg-hero_BG/25 hover:ring-1 ring-hero_BG/50 flex flex-col gap-3'>
-                          <h4 className='h4'> {jb.title} </h4>
+                          <h4 className='h4'> {jb.title[0].toUpperCase().concat(jb.title.slice(1))} </h4>
                           <p className='normalText font-semibold'> Vacancies <span className='font-normal'> {jb.vacancies} </span></p>
                           <p className='normalText font-semibold'> Country <span className='font-normal'> {jb.country ? Country.getCountryByCode(jb.country)?.name : 'N/A'} </span></p>
                           <div className='flex flex-col sm:flex-row sm:items-center gap-4'>
