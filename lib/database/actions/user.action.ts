@@ -51,7 +51,7 @@ export async function createUser(user: CreateUserParams) {
     const jwtId = signJWT({ id: newUser._id }, process.env.JWT_USER_ID_SECRET!);
     const url = `${process.env.NEXTAUTH_URL}/signup/activation/${jwtId}`;
     const emailBody = await compileActivationTemplate(newUser.firstName, url);
-    const mail = sendMail({
+    const mail = await sendMail({
         to: newUser.email,
         subject: "Please verify your email",
         body: emailBody

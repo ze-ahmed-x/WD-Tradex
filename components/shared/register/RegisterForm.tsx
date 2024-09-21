@@ -40,7 +40,6 @@ const RegisterForm = () => {
         // console.log(values)
         let uploadedImageUrl = values.imageUrl;
     if (files.length > 0) {
-        console.log("uploading image...")
       const uploadImages = await startUpload(files);
       if (!uploadImages) {
         toast({

@@ -37,7 +37,6 @@ const ContactForm = () => {
   async function onSubmit(values: z.infer<typeof contactMeFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
     try {
       const mail =  await sendMail({
         to: 'contact@tradexpioneer.com',

@@ -41,7 +41,6 @@ const CategorySearch = () => {
     // sub category fetch and search params change
     useEffect(() => {
         let newUrl = '';
-        console.log("at lease value changed")
         if (selectedCatValue) {
             newUrl = formUrlQuery({
                 params: searchParams.toString(),
@@ -49,7 +48,6 @@ const CategorySearch = () => {
                 value:selectedCatValue,
                 keysToRemove: ['page', 'subCat']
             })
-            console.log(newUrl)
             setpSubCatFormDisabled(false)
             const currentCategory = profCategories.find((val) => val._id.toString().match(selectedCatValue));
             setProfSubCategories(currentCategory?.subCats || []);
@@ -58,19 +56,15 @@ const CategorySearch = () => {
             }
         }
         else {
-            console.log('removing sub cat and cat')
             setpSubCatFormDisabled(true)
             newUrl = removeKeysFromQuery({
                 params: searchParams.toString(),
                 keysToRemove: ['subCat', 'cat']
             })
-            console.log(newUrl)
             if (selectedCatValue) {
                 setSelectedSubCatValue('')
             }
         }
-        console.log("Before push")
-        console.log(newUrl)
         router.push(newUrl, {scroll: false});
     }, [selectedCatValue])
 
