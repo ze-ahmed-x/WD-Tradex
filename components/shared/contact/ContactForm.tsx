@@ -40,14 +40,17 @@ const ContactForm = () => {
     try {
       const mail =  await sendMail({
         to: 'contact@tradexpioneer.com',
-        subject: "Contac from Website",
+        subject: "Contact from Website (tradexpioneer.com)",
         body: `<div>
-          <p>Name: <span>${values.name}</span></p>
-          <p>Email: <span>${values.email}</span></p>
-          <p>Contact: <span>${values.mobile}</span></p>
-          <p>Subject:</p>
+          <p><b>Name:</b></p>
+          <p>${values.name}</p>
+          <p><b>Email:</b></p>
+          <p>${values.email}</p>
+          <p><b>Contact:</b></p>
+          <p>${values.mobile}</p>
+          <p><b>Subject:</b></p>
           <p>${values.subject}</p>
-          <p>message: </p>
+          <p><b>message:</b></p>
           <p>${values.message}</p>
         </div>`
       })
