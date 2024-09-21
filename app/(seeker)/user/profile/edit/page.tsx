@@ -1,4 +1,4 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/utils/authOptions'
 import SignupForm from '@/components/shared/userForms/SignupForm'
 import UserUpdateForm from '@/components/shared/userForms/UserUpdateForm'
 import { findUserByIdExternal } from '@/lib/database/actions/user.action'

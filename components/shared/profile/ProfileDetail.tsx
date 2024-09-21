@@ -1,4 +1,4 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/utils/authOptions'
 import { Separator } from '@/components/ui/separator'
 import { UserStatus } from '@/lib/Constants'
 import { findDetailedUserById } from '@/lib/database/actions/user.action'

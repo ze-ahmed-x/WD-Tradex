@@ -1,4 +1,4 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/utils/authOptions'
 import ProfileDetail from '@/components/shared/profile/ProfileDetail'
 import ProfileHeader from '@/components/shared/profile/ProfileHeader'
 import { Separator } from '@/components/ui/separator'
