@@ -1,6 +1,11 @@
 import ContactCard from '@/components/shared/contact/ContactCard'
 import { pageContactInfo } from '@/lib/Constants'
+import { Metadata } from 'next'
 import React from 'react'
+
+export const metadata: Metadata = {
+  title: "Contact"
+}
 
 const page = () => {
   return (

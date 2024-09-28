@@ -2,6 +2,11 @@ import ImageTextSec from '@/components/shared/ImageTextSec'
 import { services } from '@/lib/Constants'
 import React from 'react'
 import { Separator } from '@/components/ui/separator'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: "Services"
+  }
 
 const page = () => {
     return (

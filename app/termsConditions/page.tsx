@@ -1,6 +1,15 @@
 import { Separator } from '@/components/ui/separator'
 import { termsConditions } from '@/lib/Constants'
+import { Metadata } from 'next'
 import React from 'react'
+
+export const metadata: Metadata = {
+  title: "Terms Conditions",
+  robots: {
+    index: false,
+    follow: true
+  }
+}
 
 const page = () => {
   return (

@@ -12,8 +12,14 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Tradex",
+  title: {
+    default: "Tradex",
+    template: "%s - Tradex",
+  },
   description: "Overseas Employment of Pakistanis",
+  twitter: {
+    card: "summary_large_image"
+  }
 };
 
 export default function RootLayout({

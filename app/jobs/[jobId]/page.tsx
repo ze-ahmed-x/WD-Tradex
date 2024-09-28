@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { getJobbyId } from "@/lib/database/actions/job.actions";
+import { getAllOpenJobs, getJobbyId } from "@/lib/database/actions/job.actions";
 import { IJob } from "@/lib/database/models/job.model";
 import { Pencil2Icon } from "@radix-ui/react-icons";
 import Link from "next/link";
@@ -11,13 +11,45 @@ import AddRequirement from "@/components/shared/job/AddRequirement";
 import EditRequirement from "@/components/shared/job/EditRequirement";
 import DeleteRequirement from "@/components/shared/job/DeleteRequirement";
 import { Card } from "@/components/ui/card";
+import { Metadata } from "next";
+import { cache } from "react";
+import { JobSearchResult } from "@/types";
 
 type pageProps = {
   params: { jobId: string}
 }
 
+// Below function will return array of Ids i.e. possible values for jobId. It will pre render it and make it static.
+// It only execute on build time
+// But should we do this? I guess not
+// If you have implimented this and there comes a new id, than after first fetch nextjs will cache it as well
+// However if you edit? than it will keep showing the old i guess
+// export async function generateStaticParams() {
+//   const jobs = await getAllOpenJobs({ query: '', category: '', subCategory: '', country: '', limit: 20, page: 1 }) as JobSearchResult
+//   return jobs.jobs.map(job => job._id)
+// }
+
+// manually deduplicate data fetching/ request/ API if not using fetch (Nextjs automatically deduplicates fetch)
+const getJob = cache(async (jobId: string) => {
+  return await getJobbyId(jobId)
+})
+
+
+export async function generateMetadata ({params: {jobId}} : pageProps): Promise<Metadata> {
+  const job = await getJob(jobId) as IJob;
+  return {
+    title: job.title,
+    description:job.title + ' ' + job.country + ' ' + job.professionCatName + ' ' + job.professionSubCatName
+    // openGraph: {
+    //   images: [{
+    //     url: 'some url'
+    //   }]
+    // }
+  }
+}
+
 const page = async ({params: {jobId}} : pageProps) => {
-  const job = await getJobbyId(jobId) as IJob;
+  const job = await getJob(jobId) as IJob;
   return (
     <>
       {job ?
