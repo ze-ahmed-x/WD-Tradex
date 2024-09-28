@@ -83,16 +83,16 @@ export async function getJobDetailById(jobId: string) {
     }
 }
 
-// export async function getAllJobs() {
-//     try {
-//         await connectToDatabase();
-//         const jobs = await Job.find();
-//         if (!jobs) throw new Error("Could not find any job");
-//         return JSON.parse(JSON.stringify(jobs));
-//     } catch (error) {
-//         handleError(error);
-//     }
-// }
+export async function getAllJobsRaw() {
+    try {
+        await connectToDatabase();
+        const jobs = await Job.find();
+        if (!jobs) throw new Error("Could not find any job");
+        return JSON.parse(JSON.stringify(jobs));
+    } catch (error) {
+        handleError(error);
+    }
+}
 
 export async function getAllOpenJobs({ query, category, subCategory, country, limit = 20, page = 1 }: GetAllJobsParams) {
     const conditions: any = { status: JobStatus.OPEN }

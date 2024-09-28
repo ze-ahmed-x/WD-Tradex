@@ -1,6 +1,11 @@
 import { Separator } from '@/components/ui/separator'
 import { faqs } from '@/lib/FAQs/faqs'
+import { Metadata } from 'next'
 import React from 'react'
+
+export const metadata: Metadata = {
+    title: "FAQs"
+  }
 
 const page = () => {
   return (

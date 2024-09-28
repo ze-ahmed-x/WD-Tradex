@@ -9,6 +9,12 @@ import React, { Suspense } from 'react'
 import Loading from '../loading'
 import Pagination from '@/components/shared/common/Pagination'
 import SearchJob from '@/components/shared/job/SearchJob'
+import { Metadata } from 'next'
+
+
+export const metadata: Metadata = {
+  title: "Jobs"
+}
 
 const page = async ({ searchParams }: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1
