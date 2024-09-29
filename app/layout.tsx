@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description: "Overseas Employment of Pakistanis",
   twitter: {
     card: "summary_large_image"
-  }
+  },
 };
 
 export default function RootLayout({
