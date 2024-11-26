@@ -30,7 +30,14 @@ const ContactCard = () => {
                                 <div>
                                     <MobileIcon className="text-primary size-4 sm:size-6" />
                                 </div>
-                                <p className="regularText "> {contactInfo.phone} </p>
+                                <div className="flex flex-col">
+                                    {
+                                        contactInfo.phone.map((val, index)=>(
+                                            <p key={index} className="regularText">{val}</p>
+                                        ))
+                                    }
+                                </div>
+                                {/* <p className="regularText "> {contactInfo.phone} </p> */}
                             </div>
                             <div className="flex gap-2 sm:gap-4 items-center">
                                 <div>

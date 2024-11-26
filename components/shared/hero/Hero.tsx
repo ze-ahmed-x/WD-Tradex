@@ -23,7 +23,14 @@ const Hero = () => {
                         </div>
                         <div className='flex gap-2 items-center'>
                             <MobileIcon className='text-primary min-w-8 sm:size-6' />
-                            <p className='regularText'>{contactInfo.phone}</p>
+                            <div className='flex flex-col'>
+
+                            {contactInfo.phone.map((val, index) => (
+                                <p key={index} className='regularText'>{val}</p>
+                            ))
+                        }
+                        </div>
+                            {/* <p className='regularText'>{contactInfo.phone}</p> */}
                         </div>
                         <div className='flex gap-2 items-center'>
                             <EnvelopeClosedIcon className='text-primary min-w-8 sm:size-6' />
@@ -35,10 +42,10 @@ const Hero = () => {
                     </Button>
                 </div>
                 <div>
-                <Image src={hero.src} alt='hero'
-                    height={306} width={450}
+                    <Image src={hero.src} alt='hero'
+                        height={306} width={450}
                     />
-                    </div>
+                </div>
             </div>
         </div>
     )

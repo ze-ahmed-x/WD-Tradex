@@ -70,8 +70,8 @@ export const navItems = [
 ]
 
 export const contactInfo = {
-    address: 'Office # 01, 4th Floor, FATA House, G-5/1 Islamabad, Pakistan.',
-    phone: "+92-333-1000408",
+    address: 'Office # 404, 4th Floor, Al Makkah Tower, Adam Gee Road, Saddar, Rawalpindi, Pakistan',
+    phone: ["+92-321-5365755", "+92-333-8119256"],
     email: "contact@tradexpioneer.com"
 }
 
