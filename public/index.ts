@@ -28,7 +28,7 @@ import blog2Image from "./images/blog2.jpg"
 import blochistanGovt from "./images/blochistanGovt.png"
 import ajkGovt from "./images/ajkGovt.png"
 import acConsultant from "./images/ac.png"
-import ctti from "./images/CTTI.png"
+import ctti from "./images/ctti.png"
 import numl from "./images/numl.svg"
 
 export {
