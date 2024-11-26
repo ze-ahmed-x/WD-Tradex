@@ -14,7 +14,6 @@ const Process = () => {
                     <ProcessCircle key={step.seqNo} number={step.seqNo} label={step.description} />
                 ))}
             </div>
-
         </div>
     )
 }

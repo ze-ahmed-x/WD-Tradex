@@ -15,6 +15,10 @@ import {
     globalTrade,
     localTrade,
     alternateEnery,
+    ajkGovt,
+    ctti,
+    acConsultant,
+    numl,
 } from "@/public"
 
 export enum Gender {
@@ -51,8 +55,8 @@ export const ProjectStatus = Object.freeze({
 });
 
 export const ApplicationStatus = Object.freeze({
-    applied :'applied',
-    selected : 'selected',
+    applied: 'applied',
+    selected: 'selected',
     requirementsCompleted: 'requirementsCompleted',
     approved: 'approved',
     rejected: 'rejected'
@@ -105,6 +109,33 @@ export const listOfReligions = [
     "Norse Religion",
     "Other"
 ] as const; // Using 'as const' to create a tuple type - A special kind of array with a predefined length and specific types for each of its elements at each index position.
+
+export const achievements = {
+    title: "Achievements",
+    sub_text: "Partnering with esteemed institutions across the globe, we foster impactful collaborations both nationally and internationally.",
+    data: [
+        {
+            img: ajkGovt,
+            title: "Govt of Balochistan",
+            description: "Award of BTVETA, CM Balochistan skill development initiative"
+        },
+        {
+            img: numl,
+            title: "NUML",
+            description: "MOU with for foriegn language training and testing"
+        },
+        {
+            img: acConsultant,
+            title: "Asghar Consultants e.K., Hamburg, Germany",
+            description: "MOU to cooperate in HR Export opportunities in Europe"
+        },
+        {
+            img: ctti,
+            title: "Construction Technology And Training Institute",
+            description: "MOU for testing and training of Construction Technologies"
+        },
+    ]
+}
 
 export const processInfo = {
     title: "Process Cycle",
@@ -296,6 +327,6 @@ export const termsConditions = {
             heading: "Contact",
             text: "If you have any questions regarding these terms and conditions, you may contact us at contact@tradexpioneer.com."
         },
-        
+
     ]
 }

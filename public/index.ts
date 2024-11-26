@@ -25,6 +25,11 @@ import alternateEnery from './images/ae.webp'
 import blog1Image from './images/blog1.jpg'
 import underConstructionImage from './images/UC.webp'
 import blog2Image from "./images/blog2.jpg"
+import blochistanGovt from "./images/blochistanGovt.png"
+import ajkGovt from "./images/ajkGovt.png"
+import acConsultant from "./images/ac.png"
+import ctti from "./images/CTTI.png"
+import numl from "./images/numl.svg"
 
 export {
 logo,
@@ -53,5 +58,10 @@ about,
 alternateEnery,
 blog1Image,
 underConstructionImage,
-blog2Image
+blog2Image,
+blochistanGovt,
+ajkGovt,
+acConsultant,
+numl,
+ctti
 }

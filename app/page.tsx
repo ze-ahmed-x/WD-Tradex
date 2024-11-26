@@ -1,3 +1,4 @@
+import Achievements from "@/components/shared/achievements/Achievements";
 import Clients from "@/components/shared/clients/Clients";
 import Contact from "@/components/shared/contact/Contact";
 import Hero from "@/components/shared/hero/Hero";
@@ -17,6 +18,9 @@ export default function Home() {
         </section>
         <section>
           <Intro />
+        </section>
+        <section>
+          <Achievements />
         </section>
         <section>
           <Process />
